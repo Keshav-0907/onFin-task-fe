@@ -9,6 +9,7 @@ interface StatsProps {
 }
 
 const Stats = ({ stats, loading }: StatsProps) => {
+    console.log('Stats', stats, loading)
     return (
         <div className='px-4 py-4 flex-col flex gap-4'>
             <div className='flex flex-col gap-2'>

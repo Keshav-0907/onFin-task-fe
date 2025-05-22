@@ -7,5 +7,5 @@ interface AreaStore {
 
 export const useAreaStore = create<AreaStore>((set) => ({
     activePindCode: null,
-    setActivePinCode: (code:any) => set({ activePindCode: code }),
+    setActivePinCode: (code:any) => set({ activePindCode: code })
 }))

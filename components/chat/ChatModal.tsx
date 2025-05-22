@@ -1,0 +1,42 @@
+'use client'
+
+import React from 'react';
+import { useChatStore } from '@/store/useChatStore';
+import { X } from 'lucide-react';
+import { Input } from '../ui/input';
+import { Button } from '../ui/button';
+import { useAreaStore } from '@/store/useAreaStore';
+import ChatMessage from './ChatMessage';
+import ChatHeader from './ChatHeader';
+import ChatInput from './ChatInput';
+
+const ChatModal = () => {
+  const isOpen = useChatStore((state) => state.isChatModalOpen);
+  const toggleChatModal = useChatStore((state) => state.toggleChatModal);
+  const activePinCode = useAreaStore((state) => state.activePindCode);
+
+
+  if (!isOpen) return null;
+
+  return (
+    <div
+      className="fixed inset-0 bg-black/20 bg-opacity-50 flex items-center justify-center z-50"
+      onClick={toggleChatModal}
+    >
+      <div
+        className="bg-white rounded-md max-w-xl w-full shadow-lg relative"
+        onClick={(e) => e.stopPropagation()}
+      >
+
+        <ChatHeader/>
+
+        <ChatMessage />
+
+        <ChatInput/>
+
+      </div>
+    </div>
+  );
+};
+
+export default ChatModal;

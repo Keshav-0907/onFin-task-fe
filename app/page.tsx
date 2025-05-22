@@ -1,5 +1,7 @@
+import FloatingChatIcon from "@/components/chat/FloatingChatIcon";
 import Drawer from "@/components/drawer/Drawer";
 import MapContainer from "@/components/map/MapContainer";
+import ChatModal from "@/components/chat/ChatModal";
 
 export default function Home() {
 
@@ -7,6 +9,8 @@ export default function Home() {
     <div className="h-screen w-screen flex">
       <MapContainer />
       <Drawer/>
+      <FloatingChatIcon/>
+      <ChatModal/>
     </div>
   );
 }
