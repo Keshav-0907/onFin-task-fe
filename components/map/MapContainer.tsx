@@ -24,7 +24,6 @@ const MapContainer = ({
 }: MapProps) => {
     const mapContainerRef = useRef<HTMLDivElement | null>(null)
     const mapRef = useRef<mapboxgl.Map | null>(null)
-    const { areas } = useServedAreas()
     const setActivePinCode = useAreaStore(state => state.setActivePinCode)
 
    
@@ -147,7 +146,7 @@ const MapContainer = ({
             mapRef.current?.remove()
             mapRef.current = null
         }
-    }, [center, zoom, areas])
+    }, [center, zoom])
 
     return <div ref={mapContainerRef} className="w-full h-full" />
 }

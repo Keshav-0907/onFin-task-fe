@@ -13,7 +13,6 @@ import ChatInput from './ChatInput';
 const ChatModal = () => {
   const isOpen = useChatStore((state) => state.isChatModalOpen);
   const toggleChatModal = useChatStore((state) => state.toggleChatModal);
-  const activePinCode = useAreaStore((state) => state.activePindCode);
 
 
   if (!isOpen) return null;
@@ -24,7 +23,7 @@ const ChatModal = () => {
       onClick={toggleChatModal}
     >
       <div
-        className="bg-white rounded-md max-w-xl w-full shadow-lg relative"
+        className="bg-white rounded-md max-w-xl max-h-[80vh] w-full shadow-lg relative"
         onClick={(e) => e.stopPropagation()}
       >
 
@@ -32,8 +31,9 @@ const ChatModal = () => {
 
         <ChatMessage />
 
-        <ChatInput/>
-
+        <div className="">
+          <ChatInput/>
+        </div>
       </div>
     </div>
   );

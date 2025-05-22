@@ -85,7 +85,7 @@ const Drawer = () => {
           activePinCode ? 'translate-x-0' : 'translate-x-full'
         }`}
       >
-        <DrawerHeader locality={stats?.name || lockedData?.areaName || fallback?.areaName || 'Area'} isLocked={isLocked} />
+        <DrawerHeader locality={stats?.areaName || lockedData?.areaName || fallback?.areaName || 'Area'} isLocked={isLocked} />
 
         {loading ? (
           <div className="p-4 text-center text-sm text-gray-500">Loading area data...</div>
