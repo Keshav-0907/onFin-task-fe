@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import useServedAreas from '@/hooks/useServedAreas'
+import { useAreaStore } from '@/store/useAreaStore'
 
 if (!process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
     throw new Error('NEXT_PUBLIC_MAPBOX_TOKEN is not defined')
@@ -22,7 +23,8 @@ const MapContainer = ({
 }: MapProps) => {
     const mapContainerRef = useRef<HTMLDivElement | null>(null)
     const mapRef = useRef<mapboxgl.Map | null>(null)
-    const { areas, loading, error } = useServedAreas()
+    const { areas } = useServedAreas()
+    const setActivePinCode = useAreaStore(state => state.setActivePinCode)
 
     const servedPinCodes = areas.map(area => area.pinCode)
 
@@ -86,6 +88,19 @@ const MapContainer = ({
                     ]
                 }
             })
+
+             mapRef.current?.on('click', 'pincode-fill', (e) => {
+                if (mapRef.current) {
+                    mapRef.current.getCanvas().style.cursor = 'pointer'
+                }
+
+                const properties = e.features?.[0]?.properties;
+                const pinCode = properties?.pin_code;
+
+                setActivePinCode(pinCode)
+            })           
+
+            
         })
 
         return () => {
