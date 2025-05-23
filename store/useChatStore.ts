@@ -13,6 +13,14 @@ interface ChatStore {
     addChatMessage: (message: ChatMessage) => void
     updateStreamingMessage: (partialMsg: string) => void
     clearChatHistory: () => void
+    chatSummary: {
+        summary: string
+    },
+    setChatSummary: (summary: string) => void,
+    isSummarising: boolean,
+    setIsSummarising: (isSummarising: boolean) => void,
+    isError: boolean,
+    setIsError: (isError: boolean) => void,
 }
 
 export const useChatStore = create<ChatStore>((set) => ({
@@ -44,4 +52,16 @@ export const useChatStore = create<ChatStore>((set) => ({
 
 
     clearChatHistory: () => set({ chatHistory: [] }),
+    chatSummary: {
+        summary: '',
+    },
+    setChatSummary: (summary: string) => set({
+        chatSummary: {
+            summary,
+        },
+    }),
+    isSummarising: false,
+    setIsSummarising: (isSummarising: boolean) => set({ isSummarising }),
+    isError: false,
+    setIsError: (isError: boolean) => set({ isError }),
 }))

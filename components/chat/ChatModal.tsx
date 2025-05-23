@@ -23,7 +23,7 @@ const ChatModal = () => {
       onClick={toggleChatModal}
     >
       <div
-        className="bg-white rounded-md max-w-xl max-h-[80vh] w-full shadow-lg relative"
+        className="bg-[#F8F4F1] rounded-md max-w-xl max-h-[80vh] w-full shadow-lg relative"
         onClick={(e) => e.stopPropagation()}
       >
 

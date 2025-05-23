@@ -13,14 +13,17 @@ const ChatInput = () => {
   const addChatMessage = useChatStore((state) => state.addChatMessage)
   const updateStreamingMessage = useChatStore((state) => state.updateStreamingMessage)
   const chatHistory = useChatStore((state) => state.chatHistory)
+  const isError = useChatStore((state) => state.isError)
+  const setIsError = useChatStore((state) => state.setIsError)
+
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!message.trim()) return
 
+    setIsError(false)
     const userTimestamp = new Date().toISOString()
 
-    // Add user message immediately
     addChatMessage({
       writer: 'user',
       message,
@@ -43,9 +46,21 @@ const ChatInput = () => {
         }),
       })
 
-      if (!res.body) throw new Error('No response body')
+      if(res.body === null) {
+        console.error('Response body is null')
+        setIsError(true)
+        updateStreamingMessage('[Error fetching response]')
+        return
+      }
 
-      // Add initial assistant message
+      if (res.status !== 200) {
+        const errorMessage = await res.text()
+        console.error('Error response:', errorMessage)
+        setIsError(true)
+        updateStreamingMessage('[Error fetching response]')
+        return
+      }
+
       addChatMessage({
         writer: 'assistant',
         message: '',
@@ -73,11 +88,13 @@ const ChatInput = () => {
       }
     } catch (err) {
       console.error('Streaming failed:', err)
+      setIsError(true)
       updateStreamingMessage('[Error fetching response]')
     } finally {
       setLoading(false)
     }
   }
+
 
   return (
     <div className='p-2 border-t flex flex-col gap-1'>
