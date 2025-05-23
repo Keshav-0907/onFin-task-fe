@@ -157,10 +157,10 @@ const Drawer = () => {
 
       <div
         ref={drawerRef}
-        className={`fixed flex flex-col top-0 right-0 rounded-l-xl overflow-y-auto h-full border-l-[1px] w-[450px] bg-[#FFF2E6] shadow-lg z-50 transform transition-transform duration-300 ${activePinCode ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed flex flex-col top-0 right-0 rounded-l-xl overflow-y-auto h-full border-l-[1px] md:w-[450px] w-[90%] bg-[#FFF2E6] shadow-lg z-50 transform transition-transform duration-300 ${activePinCode ? 'translate-x-0' : 'translate-x-full'
           }`}
       >
-        <DrawerHeader locality={statsData?.data?.areaName || lockedData?.areaName || fallbackData?.areaName || 'Area'} isLocked={isLocked} />
+        <DrawerHeader locality={statsData?.data?.areaName || lockedData?.areaName || fallbackData?.areaName || 'Area'} isLocked={isLocked || isFallback} />
 
         {loading ? (
           <div>
