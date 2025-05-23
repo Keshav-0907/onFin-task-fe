@@ -18,6 +18,17 @@ interface MapProps {
     className?: string
 }
 
+interface RawAreaData {
+    name: string
+    pinCode: string
+    isServed: boolean
+    activeFrom: string
+    geometry: {
+        type: 'Polygon'
+        coordinates: number[][][]
+    }
+}
+
 const MapContainer = ({
     center = [77.5946, 12.9716],
     zoom = 10,
@@ -38,14 +49,12 @@ const MapContainer = ({
 
                 const geojson: FeatureCollection<Polygon> = {
                     type: 'FeatureCollection',
-                    features: raw.map((area: any) => ({
+                    features: raw.map((area: RawAreaData) => ({
                         type: 'Feature',
                         properties: {
                             name: area.name,
                             pinCode: area.pinCode,
                             isServed: area.isServed,
-                            pocName: area.pocName,
-                            pocPhone: area.pocPhone,
                             activeFrom: area.activeFrom,
                         },
                         geometry: area.geometry,
@@ -62,8 +71,8 @@ const MapContainer = ({
 
                 mapRef.current = map
 
-                 const servedPinCodes = raw.filter((area: any) => area.isServed).map((area: any) => area.pinCode)
-                 const lockedPinCodes = raw.filter((area: any) => !area.isServed).map((area: any) => area.pinCode)
+                 const servedPinCodes = raw.filter((area: RawAreaData) => area.isServed).map((area: RawAreaData) => area.pinCode)
+                 const lockedPinCodes = raw.filter((area: RawAreaData) => !area.isServed).map((area: RawAreaData) => area.pinCode)
 
                 map.on('load', () => {
                     map.addSource('pincode-boundaries', {

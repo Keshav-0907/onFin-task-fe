@@ -34,15 +34,75 @@ interface FallBackProps {
   pinCode: string;
   populationDensity: number;
   purchasingPower: number;
-
 }
+
+interface LockedDataProps {
+  areaName: string;
+  area_name: string;
+  isLocked: boolean;
+  pinCode: string;
+  wikiData?: {
+    content_urls?: {
+      desktop?: {
+        page?: string;
+        revisions?: string;
+        edit?: string;
+        talk?: string;
+      };
+      mobile?: {
+        page?: string;
+        revisions?: string;
+        edit?: string;
+        talk?: string;
+      };
+    };
+    title?: string;
+    displaytitle?: string;
+    namespace?: {
+      id?: number;
+      text?: string;
+    };
+    wikibase_item?: string;
+    titles?: {
+      canonical?: string;
+      normalized?: string;
+      display?: string;
+    };
+    pageid?: number;
+    thumbnail?: {
+      source?: string;
+      width?: number;
+      height?: number;
+    };
+    originalimage?: {
+      source?: string;
+      width?: number;
+      height?: number;
+    };
+    lang?: string;
+    dir?: string;
+    revision?: string;
+    tid?: string;
+    timestamp?: string;
+    description?: string;
+    description_source?: string;
+    coordinates?: {
+      lat?: number;
+      lon?: number;
+    };
+    extract?: string;
+    extract_html?: string;
+    type?: string;
+  };
+}
+
 
 const Drawer = () => {
   const activePinCode = useAreaStore((state) => state.activePindCode);
   const drawerRef = useRef<HTMLDivElement>(null);
 
   const [statsData, setStatsData] = useState<StatsProps | null>(null);
-  const [lockedData, setLockedData] = useState<any>(null);
+  const [lockedData, setLockedData] = useState<LockedDataProps | null>(null);
   const [fallbackData, setFallbackData] = useState<FallBackProps | null>(null);
 
   const [loading, setLoading] = useState(false);

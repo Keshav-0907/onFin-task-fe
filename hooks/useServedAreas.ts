@@ -11,7 +11,7 @@ export interface Area {
   avgDeliveryTime: number
   deliveryDelay: number
   activeFrom: string
-  [key: string]: any
+  [key: string]: string | number | boolean
 }
 
 export default function useServedAreas() {
@@ -27,8 +27,8 @@ export default function useServedAreas() {
 
         const data = await res.json()
         setAreas(data)
-      } catch (err: any) {
-        setError(err.message || 'Unknown error')
+      } catch (err) {
+        setError('Unknown error')
       } finally {
         setLoading(false)
       }
