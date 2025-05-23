@@ -18,15 +18,9 @@ interface StatsProps {
             opens: number;
         }[];
     } | null
-    loading: boolean;
 }
 
-const Stats = ({ stats, loading }: StatsProps) => {
-
-    if (loading && !stats) {
-        return <div>  LL</div>
-    }
-
+const Stats = ({ stats }: StatsProps) => {
     return (
         <div className='px-4 py-4 flex-col flex gap-4'>
             <div className='flex flex-col gap-2'>

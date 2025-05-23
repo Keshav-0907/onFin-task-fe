@@ -10,7 +10,8 @@ import FallBack from './FallBack';
 import DrawerSkeleton from '../skeletons/DrawerSkeleton';
 
 interface StatsProps {
-  stats: {
+  data: {
+    areaName: string;
     totalOrders: number;
     avgOrderValue: number;
     avgDeliveryTime: number;
@@ -122,25 +123,25 @@ const Drawer = () => {
 
     const fetchData = async () => {
       try {
-        const res = await axios.get(`http://localhost:8080/api/areas/area-stats/${activePinCode}`);
-        const data = res.data;
+        const response = await axios.get(`http://localhost:8080/api/areas/area-stats/${activePinCode}`);
 
-        if (data.isLocked) {
+
+        if (response.data.data.isLocked) {
           setIsLocked(true);
-          setLockedData(data);
-        } else if (data.isFallback) {
+          setLockedData(response.data.data);
+        } else if (response.data.data.isFallback) {
           setIsFallback(true);
-          console.log('Fallback data:', data);
-          setFallbackData(data);
+          console.log('Fallback data:', response.data.data);
+          setFallbackData(response.data.data);
         } else {
-          setStatsData(data);
+          setStatsData(response.data);
         }
       } catch (error) {
         console.error('Error fetching area data:', error);
       } finally {
         setTimeout(() => {
           setLoading(false);
-        }, 1000);
+        }, 200);
       }
     };
 
@@ -159,7 +160,7 @@ const Drawer = () => {
         className={`fixed flex flex-col top-0 right-0 rounded-l-xl overflow-y-auto h-full border-l-[1px] w-[450px] bg-[#FFF2E6] shadow-lg z-50 transform transition-transform duration-300 ${activePinCode ? 'translate-x-0' : 'translate-x-full'
           }`}
       >
-        <DrawerHeader locality={statsData?.areaName || lockedData?.areaName || fallbackData?.areaName || 'Area'} isLocked={isLocked} />
+        <DrawerHeader locality={statsData?.data?.areaName || lockedData?.areaName || fallbackData?.areaName || 'Area'} isLocked={isLocked} />
 
         {loading ? (
           <div>
@@ -170,7 +171,7 @@ const Drawer = () => {
         ) : isFallback ? (
           <FallBack fallbackData={fallbackData} />
         ) : statsData ? (
-          <Stats stats={statsData.stats} loading={loading} />
+          <Stats stats={statsData.data} />
         ) : (
           <div className="p-4 text-sm text-red-500">Unable to fetch area details.</div>
         )}

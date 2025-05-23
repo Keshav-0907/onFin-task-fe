@@ -1,3 +1,4 @@
+import axios from 'axios'
 import { useEffect, useState } from 'react'
 
 export interface Area {
@@ -22,11 +23,9 @@ export default function useServedAreas() {
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const res = await fetch('http://localhost:8080/api/areas/served')
-        if (!res.ok) throw new Error('Failed to fetch served areas')
-
-        const data = await res.json()
-        setAreas(data)
+        const res = await axios.get('http://localhost:8080/api/areas/served')
+        
+        setAreas(res.data.data)
       } catch (err) {
         setError('Unknown error')
       } finally {

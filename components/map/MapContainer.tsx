@@ -5,6 +5,7 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import useServedAreas from '@/hooks/useServedAreas'
 import { useAreaStore } from '@/store/useAreaStore'
 import type { FeatureCollection, Polygon } from 'geojson'
+import axios from 'axios'
 
 if (!process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
     throw new Error('NEXT_PUBLIC_MAPBOX_TOKEN is not defined')
@@ -44,8 +45,8 @@ const MapContainer = ({
 
         const initMap = async () => {
             try {
-                const res = await fetch('http://localhost:8080/api/areas/allAreas')
-                const raw = await res.json()
+                const res = await axios.get('http://localhost:8080/api/areas/allAreas')
+                const raw = res.data.data
 
                 const geojson: FeatureCollection<Polygon> = {
                     type: 'FeatureCollection',

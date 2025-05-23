@@ -19,7 +19,6 @@ const ChatMessage = () => {
   const isError = useChatStore((state) => state.isError)
   const setIsError = useChatStore((state) => state.setIsError)
 
-
   const activeAreaName = areas.find(
     (area) => Number(area.pinCode) === activePinCode
   )?.name
@@ -32,9 +31,15 @@ const ChatMessage = () => {
     }
   }, [chatHistory])
 
+  console.log({
+    length: chatHistory?.length,
+    isSummarising,
+    chatSummary,
+  })
+
 
   useEffect(() => {
-    if (chatHistory.length > 10 && chatHistory.length % 2 === 0 && !isSummarising && !chatSummary) {
+    if (chatHistory.length > 10 && chatHistory.length % 5 === 0 && !isSummarising && !chatSummary.summary) {
       const getSummary = async () => {
         try {
           setIsSummarising(true);
@@ -48,7 +53,7 @@ const ChatMessage = () => {
 
           if (res.status === 200) {
             console.log('Summary result', res.data);
-            setChatSummary(res.data);
+            setChatSummary(res.data.summary);
             useChatStore.setState({ chatHistory: recentHistory });
           } else {
             console.error('Error summarising chat history', res);
@@ -92,7 +97,7 @@ const ChatMessage = () => {
 
         )}
 
-        <div className=' p-2'>
+        <div className='p-2 flex flex-col gap-2'>
           {chatHistory.map((chat, index) => {
             const isUser = chat.writer === 'user'
 
@@ -114,7 +119,7 @@ const ChatMessage = () => {
                     : 'bg-gray-100 text-black rounded-bl-none'
                     }`}
                 >
-                  <div className='whitespace-pre-wrap'>
+                  <div className='whitespace-pre-wrap text-sm'>
                     {chat.message || (
                       <span className='italic text-gray-400'>...</span>
                     )}
