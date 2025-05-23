@@ -7,6 +7,7 @@ import DrawerHeader from './DrawerHeader';
 import Stats from './Stats';
 import LockedArea from './LockedArea';
 import FallBack from './FallBack';
+import DrawerSkeleton from '../skeletons/DrawerSkeleton';
 
 interface StatsProps {
   stats: {
@@ -137,7 +138,9 @@ const Drawer = () => {
       } catch (error) {
         console.error('Error fetching area data:', error);
       } finally {
-        setLoading(false);
+        setTimeout(() => {
+          setLoading(false);
+        }, 1000);
       }
     };
 
@@ -159,7 +162,9 @@ const Drawer = () => {
         <DrawerHeader locality={statsData?.areaName || lockedData?.areaName || fallbackData?.areaName || 'Area'} isLocked={isLocked} />
 
         {loading ? (
-          <div className="p-4 text-center text-sm text-gray-500">Loading area data...</div>
+          <div>
+            <DrawerSkeleton />
+          </div>
         ) : isLocked ? (
           <LockedArea lockedData={lockedData} />
         ) : isFallback ? (

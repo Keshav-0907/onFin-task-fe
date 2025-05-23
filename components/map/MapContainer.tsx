@@ -80,6 +80,21 @@ const MapContainer = ({
                         data: geojson,
                     })
 
+                    map.addSource('all-pincode-points', {
+                        type: 'geojson',
+                        data: '/boundary.geojson',
+                    })
+
+                    map.addLayer({
+                        id: 'pincode-points',
+                        type: 'line',
+                        source: 'all-pincode-points',
+                        paint: {
+                            'line-width': 1,
+                            'line-opacity' : 0.4
+                        },
+                    })
+
                     map.addLayer({
                         id: 'pincode-outline',
                         type: 'line',
@@ -95,8 +110,9 @@ const MapContainer = ({
                             'line-dasharray': [
                                 'case',
                                 ['in', ['get', 'pinCode'], ['literal', lockedPinCodes]],
-                                ['literal', [1, 0]],
+                                
                                 ['literal', [2, 2]],
+                                ['literal', [1, 0]],
                             ],
                         },
                     })
