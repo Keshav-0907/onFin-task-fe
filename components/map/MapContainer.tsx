@@ -2,10 +2,9 @@
 import { useEffect, useRef, memo } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
-import useServedAreas from '@/hooks/useServedAreas'
+import axios from 'axios'
 import { useAreaStore } from '@/store/useAreaStore'
 import type { FeatureCollection, Polygon } from 'geojson'
-import axios from 'axios'
 
 if (!process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
     throw new Error('NEXT_PUBLIC_MAPBOX_TOKEN is not defined')
@@ -30,15 +29,14 @@ interface RawAreaData {
     }
 }
 
-const MapContainer = ({
-    center = [77.5946, 12.9716],
-    zoom = 10,
-}: MapProps) => {
+const MapContainer = ({ center = [77.5946, 12.9716], zoom = 10 }: MapProps) => {
     const mapContainerRef = useRef<HTMLDivElement | null>(null)
     const mapRef = useRef<mapboxgl.Map | null>(null)
     const setActivePinCode = useAreaStore(state => state.setActivePinCode)
 
-   
+    const onAreaSelect = (pinCode: number) => {
+        setActivePinCode(pinCode)
+    }
 
     useEffect(() => {
         if (mapRef.current || !mapContainerRef.current) return
@@ -51,6 +49,7 @@ const MapContainer = ({
                 const geojson: FeatureCollection<Polygon> = {
                     type: 'FeatureCollection',
                     features: raw.map((area: RawAreaData) => ({
+                        id: area.pinCode,
                         type: 'Feature',
                         properties: {
                             name: area.name,
@@ -72,15 +71,23 @@ const MapContainer = ({
 
                 mapRef.current = map
 
-                 const servedPinCodes = raw.filter((area: RawAreaData) => area.isServed).map((area: RawAreaData) => area.pinCode)
-                 const lockedPinCodes = raw.filter((area: RawAreaData) => !area.isServed).map((area: RawAreaData) => area.pinCode)
+                const servedPinCodes = raw
+                    .filter((area: RawAreaData) => area.isServed)
+                    .map((area: RawAreaData) => area.pinCode)
+
+                const lockedPinCodes = raw
+                    .filter((area: RawAreaData) => !area.isServed)
+                    .map((area: RawAreaData) => area.pinCode)
 
                 map.on('load', () => {
+
+                    // main layer 
                     map.addSource('pincode-boundaries', {
                         type: 'geojson',
                         data: geojson,
                     })
 
+                    // boundary layer
                     map.addSource('all-pincode-points', {
                         type: 'geojson',
                         data: '/boundary.geojson',
@@ -92,7 +99,7 @@ const MapContainer = ({
                         source: 'all-pincode-points',
                         paint: {
                             'line-width': 1,
-                            'line-opacity' : 0.4
+                            'line-opacity': 0.4,
                         },
                     })
 
@@ -111,7 +118,6 @@ const MapContainer = ({
                             'line-dasharray': [
                                 'case',
                                 ['in', ['get', 'pinCode'], ['literal', lockedPinCodes]],
-                                
                                 ['literal', [2, 2]],
                                 ['literal', [1, 0]],
                             ],
@@ -131,6 +137,8 @@ const MapContainer = ({
                             ],
                             'fill-opacity': [
                                 'case',
+                                ['boolean', ['feature-state', 'hover'], false],
+                                0.6,
                                 ['in', ['get', 'pinCode'], ['literal', lockedPinCodes]],
                                 0.3,
                                 0.4,
@@ -138,18 +146,44 @@ const MapContainer = ({
                         },
                     })
 
-                    map.on('mouseenter', 'pincode-fill', () => {
-                        map.getCanvas().style.cursor = 'pointer'
+                    let hoveredStateId: string | number | null = null
+
+                    map.on('mousemove', 'pincode-fill', (e) => {
+                        if (e.features?.length) {
+                            const featureId = e.features[0].id
+                            if (hoveredStateId !== null && hoveredStateId !== featureId) {
+                                map.setFeatureState(
+                                    { source: 'pincode-boundaries', id: hoveredStateId },
+                                    { hover: false }
+                                )
+                            }
+
+                            if (featureId !== undefined) {
+                                hoveredStateId = featureId
+                                map.setFeatureState(
+                                    { source: 'pincode-boundaries', id: hoveredStateId },
+                                    { hover: true }
+                                )
+                            }
+                            map.getCanvas().style.cursor = 'pointer'
+                        }
                     })
 
                     map.on('mouseleave', 'pincode-fill', () => {
+                        if (hoveredStateId !== null) {
+                            map.setFeatureState(
+                                { source: 'pincode-boundaries', id: hoveredStateId },
+                                { hover: false }
+                            )
+                        }
+                        hoveredStateId = null
                         map.getCanvas().style.cursor = ''
                     })
 
                     map.on('click', 'pincode-fill', (e) => {
                         const pinCode = e.features?.[0]?.properties?.pinCode
                         if (pinCode) {
-                            setActivePinCode(pinCode)
+                            onAreaSelect(pinCode)
                         }
                     })
                 })
@@ -164,7 +198,7 @@ const MapContainer = ({
             mapRef.current?.remove()
             mapRef.current = null
         }
-    }, [center, zoom])
+    }, [center, zoom, setActivePinCode])
 
     return <div ref={mapContainerRef} className="w-full h-full" />
 }
