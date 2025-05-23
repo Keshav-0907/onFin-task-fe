@@ -24,8 +24,6 @@ const ChatMessage = () => {
     }
   }, [chatHistory])
 
-  console.log('CH',chatHistory)
-
   return (
     <div className='flex flex-col max-h-[65vh] relative h-full overflow-y-auto'>
       <div

@@ -36,7 +36,6 @@ const MapContainer = ({
                 const res = await fetch('http://localhost:8080/api/areas/allAreas')
                 const raw = await res.json()
 
-                console.log('raw', raw)
                 const geojson: FeatureCollection<Polygon> = {
                     type: 'FeatureCollection',
                     features: raw.map((area: any) => ({
@@ -63,15 +62,8 @@ const MapContainer = ({
 
                 mapRef.current = map
 
-                console.log(Array.isArray(raw))
-
                  const servedPinCodes = raw.filter((area: any) => area.isServed).map((area: any) => area.pinCode)
                  const lockedPinCodes = raw.filter((area: any) => !area.isServed).map((area: any) => area.pinCode)
-
-                 console.log({
-                    servedPinCodes,
-                    lockedPinCodes,
-                 })
 
                 map.on('load', () => {
                     map.addSource('pincode-boundaries', {

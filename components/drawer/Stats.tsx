@@ -4,12 +4,29 @@ import LineCard from './LineCard';
 import { ChartBarStacked, TrendingUp } from 'lucide-react';
 
 interface StatsProps {
-    stats: any;
+    stats: {
+        totalOrders: number;
+        avgOrderValue: number;
+        avgDeliveryTime: number;
+        deliveryDelay: number;
+        dailyOrders: {
+            date: string;
+            orders: number;
+        }[];
+        appOpensHistory: {
+            date: string;
+            opens: number;
+        }[];
+    } | null
     loading: boolean;
 }
 
 const Stats = ({ stats, loading }: StatsProps) => {
-    console.log('Stats', stats, loading)
+
+    if (loading && !stats) {
+        return <div>  LL</div>
+    }
+
     return (
         <div className='px-4 py-4 flex-col flex gap-4'>
             <div className='flex flex-col gap-2'>
@@ -23,11 +40,10 @@ const Stats = ({ stats, loading }: StatsProps) => {
             </div>
 
             <div className='flex flex-col gap-2'>
-                <div className='text-xs font-semibold text-gray-600 flex items-center gap-1'> <TrendingUp size={16}/> Other Stats </div>
-                <div className='flex flex-col gap-2'>
-                    <LineCard title={'Daily Orders'} data={stats?.dailyOrders}/>
-                    <LineCard title={'App Opens'} data={stats?.appOpensHistory}/>
-                </div>
+                <div className='text-xs font-semibold text-gray-600 flex items-center gap-1'> <TrendingUp size={16} /> Other Stats </div>
+                <LineCard title="Daily Orders" data={stats?.dailyOrders ?? []} />
+                <LineCard title="App Opens" data={stats?.appOpensHistory ?? []} />
+
             </div>
         </div>
     )

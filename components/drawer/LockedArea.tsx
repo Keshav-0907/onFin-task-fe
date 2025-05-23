@@ -1,7 +1,28 @@
 import { Info } from 'lucide-react';
 import React from 'react'
 
-const LockedArea = ({ lockedData }) => {
+interface LockedAreaProps {
+    lockedData: {
+        areaId: string;
+        areaName: string;
+        area_name: string;
+        wikiData: {
+            title: string;
+            description: string;
+            thumbnail?: {
+                source: string;
+            };
+            extract: string;
+            content_urls: {
+                desktop: {
+                    page: string;
+                };
+            };
+        };
+    } | null;
+}
+
+const LockedArea = ({ lockedData } : LockedAreaProps) => {
     if (!lockedData) return <div>No area data available.</div>
 
     const {
