@@ -6,7 +6,6 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import axios from 'axios'
 import { useAreaStore } from '@/store/useAreaStore'
 import type { FeatureCollection, Polygon } from 'geojson'
-import { RotateCw } from 'lucide-react'
 import RateLimitModal from './RateLimitModal'
 
 if (!process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {

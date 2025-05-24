@@ -11,7 +11,7 @@ const RateLimitModal = () => {
             <div className="bg-white rounded-xl shadow-lg max-w-sm w-full p-6 text-center space-y-4">
                 <h2 className="text-lg font-semibold text-red-600">Rate Limit Reached</h2>
                 <p className="text-sm text-gray-600">
-                    You're making requests too quickly. Please wait a few seconds and try again.
+                    You&apos;re making requests too quickly. Please wait a few seconds and try again.
                 </p>
                 <button
                     onClick={() => window.location.reload()}

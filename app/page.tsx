@@ -1,4 +1,3 @@
-import FloatingChatIcon from "@/components/chat/FloatingChatIcon";
 import Drawer from "@/components/drawer/Drawer";
 import MapContainer from "@/components/map/MapContainer";
 import ChatModal from "@/components/chat/ChatModal";
