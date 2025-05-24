@@ -220,10 +220,10 @@ const MapContainer = ({ center = [77.5946, 12.9716], zoom = 10 }: MapProps) => {
         }
     }, [center, zoom, setActivePinCode])
 
-    return <div aria-label="Bengaluru service map" className='w-full h-full relative'>
+    return <div role="application" aria-label="Bengaluru service map" className='w-full h-full relative'>
         <div ref={mapContainerRef} className="w-full h-full" />
         {rateLimitHit && (
-            <RateLimitModal/>
+            <RateLimitModal />
         )}
     </div>
 }
