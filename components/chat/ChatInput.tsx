@@ -33,7 +33,7 @@ const ChatInput = () => {
     setLoading(true)
 
     try {
-      const res = await fetch('http://localhost:8080/api/chat/completions', {
+      const res = await fetch(`${process.env.BACKEND_URL}/api/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

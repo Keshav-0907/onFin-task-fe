@@ -1,3 +1,4 @@
+import { baseURL } from '@/config/config'
 import axios from 'axios'
 import { useEffect, useState } from 'react'
 
@@ -23,7 +24,7 @@ export default function useServedAreas() {
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const res = await axios.get('http://localhost:8080/api/areas/served')
+        const res = await axios.get(`${baseURL}/api/areas/served`)
         
         setAreas(res.data.data)
       } catch (err) {

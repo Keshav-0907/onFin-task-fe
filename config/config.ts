@@ -1,0 +1,6 @@
+// export const baseURL =
+//   process.env.NODE_ENV === 'production'
+//     ? 'http://localhost:8080'
+//     : 'https://onfin-task-be.onrender.com';
+
+export const baseURL = 'https://onfin-task-be.onrender.com'

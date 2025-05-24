@@ -6,6 +6,7 @@ import useServedAreas from '@/hooks/useServedAreas'
 import { X, Bot, User, RotateCw } from 'lucide-react'
 import React, { useEffect, useRef } from 'react'
 import axios from 'axios'
+import { baseURL } from '@/config/config'
 
 const ChatMessage = () => {
   const { areas } = useServedAreas()
@@ -47,7 +48,7 @@ const ChatMessage = () => {
           const historyToSummarise = chatHistory.slice(0, chatHistory.length - 10);
           const recentHistory = chatHistory.slice(-10);
 
-          const res = await axios.post('http://localhost:8080/api/chat/summarise', {
+          const res = await axios.post(`${baseURL}/api/chat/summarise`, {
             chatHistory: historyToSummarise,
           });
 

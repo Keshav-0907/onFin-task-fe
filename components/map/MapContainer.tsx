@@ -7,10 +7,13 @@ import axios from 'axios'
 import { useAreaStore } from '@/store/useAreaStore'
 import type { FeatureCollection, Polygon } from 'geojson'
 import RateLimitModal from './RateLimitModal'
+import { baseURL } from '@/config/config';
 
 if (!process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
     throw new Error('NEXT_PUBLIC_MAPBOX_TOKEN is not defined')
 }
+
+console.log('baseURL', baseURL)
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
 
@@ -55,7 +58,7 @@ const MapContainer = ({ center = [77.5946, 12.9716], zoom = 10 }: MapProps) => {
 
         const initMap = async () => {
             try {
-                const res = await axios.get('http://localhost:8080/api/areas/allAreas')
+                const res = await axios.get(`${baseURL}/api/areas/allAreas`)
                 const raw = res.data.data
 
                 const geojson: FeatureCollection<Polygon> = {

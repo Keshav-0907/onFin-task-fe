@@ -10,6 +10,7 @@ import FallBack from './FallBack';
 import DrawerSkeleton from '../skeletons/DrawerSkeleton';
 import FloatingChatIcon from '../chat/FloatingChatIcon';
 import { useChatStore } from '@/store/useChatStore';
+import { baseURL } from '@/config/config';
 
 interface StatsProps {
   data: {
@@ -128,7 +129,7 @@ const Drawer = () => {
 
     const fetchData = async () => {
       try {
-        const response = await axios.get(`http://localhost:8080/api/areas/area-stats/${activePinCode}`);
+        const response = await axios.get(`${baseURL}/api/areas/area-stats/${activePinCode}`);
 
 
         if (response.data.data.isLocked) {
