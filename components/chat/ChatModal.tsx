@@ -2,10 +2,6 @@
 
 import React from 'react';
 import { useChatStore } from '@/store/useChatStore';
-import { X } from 'lucide-react';
-import { Input } from '../ui/input';
-import { Button } from '../ui/button';
-import { useAreaStore } from '@/store/useAreaStore';
 import ChatMessage from './ChatMessage';
 import ChatHeader from './ChatHeader';
 import ChatInput from './ChatInput';

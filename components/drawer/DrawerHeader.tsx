@@ -1,6 +1,5 @@
 'use client'
 import React from 'react'
-import { Button } from '../ui/button'
 import { useAreaStore } from '@/store/useAreaStore';
 import { Lock } from 'lucide-react';
 

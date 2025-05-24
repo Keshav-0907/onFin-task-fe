@@ -3,8 +3,8 @@
 import { useAreaStore } from '@/store/useAreaStore'
 import { useChatStore } from '@/store/useChatStore'
 import useServedAreas from '@/hooks/useServedAreas'
-import { X, Bot, User, RotateCcw, RotateCw } from 'lucide-react'
-import React, { useEffect, useRef, useState } from 'react'
+import { X, Bot, User, RotateCw } from 'lucide-react'
+import React, { useEffect, useRef } from 'react'
 import axios from 'axios'
 
 const ChatMessage = () => {
@@ -81,7 +81,7 @@ const ChatMessage = () => {
           <div className="text-center text-gray-600 mt-12 px-4 space-y-2">
             <h3 className="text-base font-semibold">Start a Conversation</h3>
             <p className="text-sm">
-              🤖 Ask me anything about the localities. I'm here to help!
+              🤖 Ask me anything about the localities. I&apos;m here to help!
             </p>
           </div>
         )}

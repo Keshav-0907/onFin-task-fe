@@ -13,7 +13,6 @@ const ChatInput = () => {
   const addChatMessage = useChatStore((state) => state.addChatMessage)
   const updateStreamingMessage = useChatStore((state) => state.updateStreamingMessage)
   const chatHistory = useChatStore((state) => state.chatHistory)
-  const isError = useChatStore((state) => state.isError)
   const setIsError = useChatStore((state) => state.setIsError)
 
 

@@ -70,7 +70,7 @@ const LockedArea = ({ lockedData }: LockedAreaProps) => {
         <div className="p-4 border bg-white shadow-md space-y-4">
             <div className='flex flex-col gap-1'>
                 <div className="text-xl font-semibold">{lockedData?.wikiData?.title}</div>
-                <div className='text-xs flex items-center'><Info size={14} /> Data source: Wikipedia</div>
+                <div className='text-xs flex items-center'><Info size={14} />Data source: Wikipedia</div>
             </div>
 
             {lockedData?.wikiData?.thumbnail?.source && (
