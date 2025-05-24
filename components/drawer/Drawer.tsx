@@ -9,6 +9,7 @@ import LockedArea from './LockedArea';
 import FallBack from './FallBack';
 import DrawerSkeleton from '../skeletons/DrawerSkeleton';
 import FloatingChatIcon from '../chat/FloatingChatIcon';
+import { useChatStore } from '@/store/useChatStore';
 
 interface StatsProps {
   data: {
@@ -105,6 +106,7 @@ const Drawer = () => {
   const setActivePinCode = useAreaStore((state) => state.setActivePinCode);
   const drawerRef = useRef<HTMLDivElement>(null);
   const chatIconRef = useRef<HTMLDivElement>(null);
+  const isChatModalOpen = useChatStore((state) => state.isChatModalOpen);
 
   const [statsData, setStatsData] = useState<StatsProps | null>(null);
   const [lockedData, setLockedData] = useState<LockedDataProps | null>(null);
@@ -154,13 +156,16 @@ const Drawer = () => {
 useEffect(() => {
   const handleClickOutside = (event: MouseEvent) => {
     const target = event.target as Node;
+
     if (
       drawerRef.current &&
       !drawerRef.current.contains(target) &&
       chatIconRef.current &&
       !chatIconRef.current.contains(target)
     ) {
-      setActivePinCode(null);
+      if (!isChatModalOpen) {
+        setActivePinCode(null);
+      }
     }
   };
 
@@ -171,7 +176,7 @@ useEffect(() => {
   return () => {
     document.removeEventListener('mousedown', handleClickOutside);
   };
-}, [activePinCode, setActivePinCode]);
+}, [activePinCode, setActivePinCode, isChatModalOpen]);
 
 
   return (
