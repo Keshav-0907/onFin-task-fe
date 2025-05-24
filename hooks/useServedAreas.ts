@@ -27,7 +27,7 @@ export default function useServedAreas() {
         const res = await axios.get(`${baseURL}/api/areas/served`)
         
         setAreas(res.data.data)
-      } catch (err) {
+      } catch {
         setError('Unknown error')
       } finally {
         setLoading(false)
