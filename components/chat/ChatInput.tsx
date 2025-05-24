@@ -4,6 +4,7 @@ import { Input } from '../ui/input'
 import { Button } from '../ui/button'
 import { useAreaStore } from '@/store/useAreaStore'
 import { useChatStore } from '@/store/useChatStore'
+import { baseURL } from '@/config/config'
 
 const ChatInput = () => {
   const [message, setMessage] = useState('')
@@ -33,7 +34,7 @@ const ChatInput = () => {
     setLoading(true)
 
     try {
-      const res = await fetch(`${process.env.BACKEND_URL}/api/chat/completions`, {
+      const res = await fetch(`${baseURL}/api/chat/completions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
