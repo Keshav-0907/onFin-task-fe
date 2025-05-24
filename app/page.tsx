@@ -10,7 +10,7 @@ export default function Home() {
     <div className="h-screen w-screen flex">
       <MapContainer />
       <Drawer/>
-      <FloatingChatIcon/>
+      
       <ChatModal/>
     </div>
   );

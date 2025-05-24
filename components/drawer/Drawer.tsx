@@ -8,6 +8,7 @@ import Stats from './Stats';
 import LockedArea from './LockedArea';
 import FallBack from './FallBack';
 import DrawerSkeleton from '../skeletons/DrawerSkeleton';
+import FloatingChatIcon from '../chat/FloatingChatIcon';
 
 interface StatsProps {
   data: {
@@ -101,7 +102,9 @@ interface LockedDataProps {
 
 const Drawer = () => {
   const activePinCode = useAreaStore((state) => state.activePindCode);
+  const setActivePinCode = useAreaStore((state) => state.setActivePinCode);
   const drawerRef = useRef<HTMLDivElement>(null);
+  const chatIconRef = useRef<HTMLDivElement>(null);
 
   const [statsData, setStatsData] = useState<StatsProps | null>(null);
   const [lockedData, setLockedData] = useState<LockedDataProps | null>(null);
@@ -148,6 +151,29 @@ const Drawer = () => {
     fetchData();
   }, [activePinCode]);
 
+useEffect(() => {
+  const handleClickOutside = (event: MouseEvent) => {
+    const target = event.target as Node;
+    if (
+      drawerRef.current &&
+      !drawerRef.current.contains(target) &&
+      chatIconRef.current &&
+      !chatIconRef.current.contains(target)
+    ) {
+      setActivePinCode(null);
+    }
+  };
+
+  if (activePinCode !== null) {
+    document.addEventListener('mousedown', handleClickOutside);
+  }
+
+  return () => {
+    document.removeEventListener('mousedown', handleClickOutside);
+  };
+}, [activePinCode, setActivePinCode]);
+
+
   return (
     <>
       <div
@@ -176,6 +202,9 @@ const Drawer = () => {
           <div className="p-4 text-sm text-red-500">Unable to fetch area details.</div>
         )}
       </div>
+      <div ref={chatIconRef}>
+  <FloatingChatIcon />
+</div>
     </>
   );
 };
@@ -185,18 +214,3 @@ export default Drawer;
 
 
 
-// useEffect(() => {
-//   const handleClickOutside = (event: MouseEvent) => {
-//     if (drawerRef.current && !drawerRef.current.contains(event.target as Node)) {
-//       setActivePinCode(null);
-//     }
-//   };
-
-//   if (activePinCode !== null) {
-//     document.addEventListener('mousedown', handleClickOutside);
-//   }
-
-//   return () => {
-//     document.removeEventListener('mousedown', handleClickOutside);
-//   };
-// }, [activePinCode, setActivePinCode]);

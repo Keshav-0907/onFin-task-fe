@@ -1,11 +1,13 @@
 'use client'
-import React from 'react'
+import React, { useState } from 'react'
 import { useEffect, useRef, memo } from 'react'
 import mapboxgl from 'mapbox-gl'
 import 'mapbox-gl/dist/mapbox-gl.css'
 import axios from 'axios'
 import { useAreaStore } from '@/store/useAreaStore'
 import type { FeatureCollection, Polygon } from 'geojson'
+import { RotateCw } from 'lucide-react'
+import RateLimitModal from './RateLimitModal'
 
 if (!process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
     throw new Error('NEXT_PUBLIC_MAPBOX_TOKEN is not defined')
@@ -17,6 +19,15 @@ interface MapProps {
     center?: [number, number]
     zoom?: number
     className?: string
+}
+
+interface AxiosError {
+    response: {
+        status: number
+        data: {
+            message: string
+        }
+    }
 }
 
 interface RawAreaData {
@@ -34,6 +45,7 @@ const MapContainer = ({ center = [77.5946, 12.9716], zoom = 10 }: MapProps) => {
     const mapContainerRef = useRef<HTMLDivElement | null>(null)
     const mapRef = useRef<mapboxgl.Map | null>(null)
     const setActivePinCode = useAreaStore(state => state.setActivePinCode)
+    const [rateLimitHit, setRateLimitHit] = useState<boolean>(false)
 
     const onAreaSelect = (pinCode: number) => {
         setActivePinCode(pinCode)
@@ -188,8 +200,13 @@ const MapContainer = ({ center = [77.5946, 12.9716], zoom = 10 }: MapProps) => {
                         }
                     })
                 })
-            } catch (error) {
-                console.error('Failed to load map:', error)
+            } catch (err) {
+                const error = err as AxiosError
+
+                if (error.response.status === 429) {
+                    setRateLimitHit(true)
+                    console.error('Rate limit hit. Please try again later.')
+                }
             }
         }
 
@@ -201,7 +218,12 @@ const MapContainer = ({ center = [77.5946, 12.9716], zoom = 10 }: MapProps) => {
         }
     }, [center, zoom, setActivePinCode])
 
-    return <div ref={mapContainerRef} className="w-full h-full" />
+    return <div aria-label="Bengaluru service map" className='w-full h-full relative'>
+        <div ref={mapContainerRef} className="w-full h-full" />
+        {rateLimitHit && (
+            <RateLimitModal/>
+        )}
+    </div>
 }
 
 export default memo(MapContainer)
