@@ -9,7 +9,7 @@ const ChatHeader = () => {
 
   return (
 
-    <div className='flex justify-between items-center p-2 border-b'>
+    <div className='flex justify-between items-center p-2 border-b border-gray-300'>
       <div className='flex items-center gap-2'>
         <div className='text-sm font-semibold'> AI Powered Chat </div>
         {(isSummarising || chatSummary.summary) && (
@@ -21,7 +21,7 @@ const ChatHeader = () => {
           </div>
         )}
       </div>
-      <X size={16} className='cursor-pointer' onClick={toggleChatModal} />
+      {/* <X size={16} className='cursor-pointer' onClick={toggleChatModal} /> */}
     </div>
   )
 }

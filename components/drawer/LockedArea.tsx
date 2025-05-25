@@ -110,7 +110,6 @@ const LockedArea = ({ lockedData }: LockedAreaProps) => {
         fetchRentData();
     }, [lockedData?.pinCode]);
 
-
     return (
         <div className="py-2 px-4 bg-white space-y-4">
             <div className='flex flex-col gap-1'>

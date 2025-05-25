@@ -55,10 +55,6 @@ const ChatInput = () => {
   const [servedAreasData, setServedAreasData] = useState<Locality[]>([])
   const chatSummary = useChatStore((state) => state.chatSummary)
 
-
-
-  console.log('servedAreasData', servedAreasData)
-
   useEffect(() => {
     const getAllAreas = async () => {
       try {
@@ -185,6 +181,7 @@ const ChatInput = () => {
       <form onSubmit={handleSendMessage} className="flex gap-2">
         <Input
           ref={inputRef}
+          autoFocus
           onChange={handleInputChange}
           value={message}
           type="text"
@@ -198,7 +195,7 @@ const ChatInput = () => {
       </form>
 
       {mentionMode && !selectedLocality && (
-        <div className="absolute bottom-14 left-2 w-48 text-sm border rounded-md shadow-md bg-white z-10 max-h-52 overflow-y-auto">
+        <div className="absolute bottom-14 left-2 w-48 text-sm rounded-md shadow-md bg-white z-10 max-h-52 overflow-y-auto">
           {servedAreasData
             .filter(area =>
               area.name.toLowerCase().includes(mentionQuery.toLowerCase())

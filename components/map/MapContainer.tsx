@@ -48,6 +48,7 @@ const MapContainer = ({ center = [77.5946, 12.9716], zoom = 10 }: MapProps) => {
     const [rateLimitHit, setRateLimitHit] = useState<boolean>(false)
 
     const onAreaSelect = (pinCode: number) => {
+        console.log('Selected pin code:', pinCode)
         setActivePinCode(pinCode)
     }
 

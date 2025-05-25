@@ -24,47 +24,44 @@ const FallBack = ({ fallbackData }: FallBackComponentProps) => {
   const [companyLoading, setCompanyLoading] = useState(false);
   const [rentLoading, setRentLoading] = useState(false);
 
-  useEffect(() => {
-    if (!fallbackData?.pinCode) return;
+useEffect(() => {
+  if (!fallbackData?.pinCode) return;
 
-    const fetchCompanyData = async () => {
-      try {
-        setCompanyLoading(true);
-        const res = await axios.post(`${baseURL}/api/areas/getSalary`, {
+  const fetchData = async () => {
+    setCompanyLoading(true);
+    setRentLoading(true);
+
+    try {
+      const [companyRes, rentRes] = await Promise.all([
+        axios.post(`${baseURL}/api/areas/getSalary`, {
           pinCode: fallbackData.pinCode,
-        });
-        setFallBackCompanyData(res.data);
-      } catch (error) {
-        console.error('Company data fetch failed', error);
-      } finally {
-        setCompanyLoading(false);
-      }
-    };
-
-    const fetchRentData = async () => {
-      try {
-        setRentLoading(true);
-        const res = await axios.post(`${baseURL}/api/areas/getRentPrice`, {
+        }),
+        axios.post(`${baseURL}/api/areas/getRentPrice`, {
           pinCode: fallbackData.pinCode,
-        });
-        setFallBackRentData(res.data);
-      } catch (error) {
-        console.error('Rent data fetch failed', error);
-      } finally {
-        setRentLoading(false);
-      }
-    };
+        }),
+      ]);
 
-    fetchCompanyData();
-    fetchRentData();
-  }, [fallbackData?.pinCode]);
+      setFallBackCompanyData(companyRes.data);
+      setFallBackRentData(rentRes.data);
+    } catch (error) {
+      console.error('Data fetch failed', error);
+    } finally {
+      setCompanyLoading(false);
+      setRentLoading(false);
+    }
+  };
+
+  fetchData();
+}, [fallbackData?.pinCode]);
+
+  console.log('fallBackCompanyData:', fallBackCompanyData);
 
   return (
     <div className="px-4 py-2 flex flex-col gap-6">
       {fallBackRentData || rentLoading ? (
         <RentData rentData={fallBackRentData} isLoading={rentLoading} />
       ) : null}
-      {fallBackCompanyData || companyLoading ? (
+      {fallBackCompanyData || !companyLoading ? (
         <SalaryData companiesData={fallBackCompanyData} isLoading={companyLoading} />
       ) : null}
       {fallBackCompanyData && !companyLoading ? (

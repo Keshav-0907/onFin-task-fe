@@ -3,10 +3,11 @@
 import { useAreaStore } from '@/store/useAreaStore'
 import { useChatStore } from '@/store/useChatStore'
 import useServedAreas from '@/hooks/useServedAreas'
-import { X, Bot, User, RotateCw } from 'lucide-react'
+import { X, Bot, User, RotateCw, Trash, Trash2 } from 'lucide-react'
 import React, { useEffect, useRef } from 'react'
 import axios from 'axios'
 import { baseURL } from '@/config/config'
+import { toast } from 'react-hot-toast'
 
 const ChatMessage = () => {
   const { areas } = useServedAreas()
@@ -67,11 +68,20 @@ const ChatMessage = () => {
     }
   }, [chatHistory.length]);
 
+  const clearHistory = () => {
+    useChatStore.setState({ chatHistory: [], chatSummary: { summary: '' } });
+    setActivePinCode(null);
+    setIsError(false);
+    toast.success('Chat history cleared successfully');
+  };
+
+  console.log(chatHistory.length, 'chat history length');
+
   return (
-    <div className='relative flex flex-col max-h-[65vh] min-h-[40vh] h-full overflow-y-auto'>
+    <div className='relative flex flex-col overflow-y-auto w-full'>
       <div
         ref={scrollRef}
-        className='flex-1 overflow-y-auto space-y-3 pb-16 p-2'
+        className='overflow-y-auto space-y-3 p-2 pt-10 h-full'
       >
         {chatHistory.length === 0 && !chatSummary.summary && (
           <div className="text-center text-gray-600 mt-12 px-4 space-y-2">
@@ -111,8 +121,8 @@ const ChatMessage = () => {
 
                 <div
                   className={`max-w-xs px-3 py-2 rounded-lg text-sm shadow ${isUser
-                    ? 'bg-blue-500 text-white rounded-br-none'
-                    : 'bg-gray-100 text-black rounded-bl-none'
+                    ? 'bg-blue-500 text-white rounded-tr-none'
+                    : 'bg-gray-100 text-black rounded-tl-none'
                     }`}
                 >
                   <div className='whitespace-pre-wrap text-sm'>
@@ -141,20 +151,34 @@ const ChatMessage = () => {
         </div>
       </div>
 
-      {activePinCode && (
-        <div className='absolute bottom-0 w-full flex gap-2 bg-slate-100 py-1 px-2 text-sm items-center z-10'>
-          <div>Active Area:</div>
-          <div className='text-sm bg-yellow-500 px-2 rounded-full w-fit text-white flex items-center gap-1'>
-            {activeAreaName}
-            <div
-              className='cursor-pointer bg-white text-yellow-500 rounded-full p-[2px]'
-              onClick={() => setActivePinCode(null)}
-            >
-              <X size={12} strokeWidth={2} />
+      <div className={`absolute top-0 w-full flex gap-2 bg-slate-1900 py-1 px-2 text-sm items-center z-10 ${activeAreaName ? 'justify-between' : 'justify-end'}`}>
+        {activeAreaName && (
+          <div className='flex gap-2'>
+            <div className='text-xs'>Active Area:</div>
+            <div className='text-xs bg-yellow-500 pl-2 pr-1 py-0.5 rounded-full w-fit text-white flex items-center gap-1'>
+              {activeAreaName}
+              <div
+                className='cursor-pointer bg-white text-yellow-500 rounded-full p-[2px]'
+                onClick={() => setActivePinCode(null)}
+              >
+                <X size={12} strokeWidth={2} />
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+
+        {
+          chatHistory.length > 0 && (
+            <div
+              onClick={clearHistory}
+              className='flex items-center gap-1 cursor-pointer text-red-600 hover:text-red-800 transition-colors duration-200 text-xs'
+            >
+              <Trash2 size={12} />
+              Clear History
+            </div>
+          )
+        }
+      </div>
 
       {
         isError && (

@@ -106,7 +106,6 @@ const Drawer = () => {
   const activePinCode = useAreaStore((state) => state.activePindCode);
   const setActivePinCode = useAreaStore((state) => state.setActivePinCode);
   const drawerRef = useRef<HTMLDivElement>(null);
-  const chatIconRef = useRef<HTMLDivElement>(null);
   const isChatModalOpen = useChatStore((state) => state.isChatModalOpen);
 
   const [statsData, setStatsData] = useState<StatsProps | null>(null);
@@ -153,45 +152,32 @@ const Drawer = () => {
     fetchData();
   }, [activePinCode]);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent) => {
-      const target = event.target as Node;
+  // useEffect(() => {
+  //   const handleClickOutside = (event: MouseEvent) => {
+  //     const target = event.target as Node;
 
-      if (
-        drawerRef.current &&
-        !drawerRef.current.contains(target) &&
-        chatIconRef.current &&
-        !chatIconRef.current.contains(target)
-      ) {
-        if (!isChatModalOpen) {
-          setActivePinCode(null);
-        }
-      }
-    };
+  //     if (
+  //       drawerRef.current &&
+  //       !drawerRef.current.contains(target)
+  //     ) {
+  //       if (!isChatModalOpen) {
+  //         setActivePinCode(null);
+  //       }
+  //     }
+  //   };
 
-    if (activePinCode !== null) {
-      document.addEventListener('mousedown', handleClickOutside);
-    }
+  //   if (activePinCode !== null) {
+  //     document.addEventListener('mousedown', handleClickOutside);
+  //   }
 
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [activePinCode, setActivePinCode, isChatModalOpen]);
+  //   return () => {
+  //     document.removeEventListener('mousedown', handleClickOutside);
+  //   };
+  // }, [activePinCode, setActivePinCode, isChatModalOpen]);
 
-  console.log({
-    activePinCode,
-    loading,
-    isLocked,
-    isFallback
-  })
+
   return (
-    <>
-      <div
-        className={`fixed inset-0 bg-black/30 transition-opacity duration-300 z-40 ${activePinCode ? 'opacity-100 pointer-events-auto' : 'opacity-0 pointer-events-none'
-          }`}
-      />
-
-      <div
+    <div
         ref={drawerRef}
         className={`fixed flex flex-col top-0 right-0 rounded-l-xl overflow-y-auto h-full border-l-[1px] md:w-[450px] w-[90%] bg-white shadow-lg z-50 transform transition-transform duration-300 ${activePinCode ? 'translate-x-0' : 'translate-x-full'
           }`}
@@ -212,10 +198,6 @@ const Drawer = () => {
           <div className="p-4 text-sm text-red-500">Unable to fetch area details.</div>
         )}
       </div>
-      <div ref={chatIconRef}>
-        <FloatingChatIcon />
-      </div>
-    </>
   );
 };
 
