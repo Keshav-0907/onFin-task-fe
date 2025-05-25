@@ -5,6 +5,7 @@ import TopCompanies from './fallback/TopCompanies';
 import SalaryData from './fallback/SalaryData';
 import RentData from './fallback/RentData';
 import axios from 'axios';
+import { baseURL } from '@/config/config';
 
 interface FallBackComponentProps {
   fallbackData: {
@@ -29,7 +30,7 @@ const FallBack = ({ fallbackData }: FallBackComponentProps) => {
     const fetchCompanyData = async () => {
       try {
         setCompanyLoading(true);
-        const res = await axios.post(`http://localhost:8080/api/areas/getSalary`, {
+        const res = await axios.post(`${baseURL}/api/areas/getSalary`, {
           pinCode: fallbackData.pinCode,
         });
         setFallBackCompanyData(res.data);
@@ -43,7 +44,7 @@ const FallBack = ({ fallbackData }: FallBackComponentProps) => {
     const fetchRentData = async () => {
       try {
         setRentLoading(true);
-        const res = await axios.post(`http://localhost:8080/api/areas/getRentPrice`, {
+        const res = await axios.post(`${baseURL}/api/areas/getRentPrice`, {
           pinCode: fallbackData.pinCode,
         });
         setFallBackRentData(res.data);

@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react'
 import RentData from './fallback/RentData';
 import TopCompanies from './fallback/TopCompanies';
 import SalaryData from './fallback/SalaryData';
+import { baseURL } from '@/config/config';
 
 interface LockedAreaProps {
     lockedData: {
@@ -80,7 +81,7 @@ const LockedArea = ({ lockedData }: LockedAreaProps) => {
         const fetchCompanyData = async () => {
             try {
                 setCompanyLoading(true);
-                const res = await axios.post(`http://localhost:8080/api/areas/getSalary`, {
+                const res = await axios.post(`${baseURL}/api/areas/getSalary`, {
                     pinCode: lockedData.pinCode,
                 });
                 setCompanyData(res.data);
@@ -94,7 +95,7 @@ const LockedArea = ({ lockedData }: LockedAreaProps) => {
         const fetchRentData = async () => {
             try {
                 setRentLoading(true);
-                const res = await axios.post(`http://localhost:8080/api/areas/getRentPrice`, {
+                const res = await axios.post(`${baseURL}/api/areas/getRentPrice`, {
                     pinCode: lockedData.pinCode,
                 });
                 setRentData(res.data);
