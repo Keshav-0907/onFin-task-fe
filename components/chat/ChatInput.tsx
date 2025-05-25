@@ -56,7 +56,7 @@ const ChatInput = () => {
   const chatSummary = useChatStore((state) => state.chatSummary)
 
 
-  
+
   console.log('servedAreasData', servedAreasData)
 
   useEffect(() => {
@@ -107,8 +107,6 @@ const ChatInput = () => {
     setMessage('')
     setLoading(true)
 
-    console.log('chatSummary to req', chatSummary)
-
     try {
       const res = await fetch(`${baseURL}/api/chat/completions`, {
         method: 'POST',
@@ -118,8 +116,8 @@ const ChatInput = () => {
         body: JSON.stringify({
           message,
           pinCode: activePinCode,
-          chatHistory,
-          chatSummary : chatSummary.summary || '',
+          chatHistory: chatHistory.slice(-10),
+          chatSummary: chatSummary.summary || '',
         }),
       })
 
@@ -232,23 +230,27 @@ const ChatInput = () => {
 
           {Object.entries(selectedLocality.stats).map(([key, value]) => {
             const isArray = Array.isArray(value);
-            const isObject = !isArray && typeof value === 'object';
+            const isObject = !isArray && typeof value === 'object' && value !== null;
 
-            if (isObject) return null;
-
-            const display = isArray ? '[..]' : value;   
+            // For both primitive values and arrays (e.g., dailyOrders), allow mention insertion
+            const display = isArray
+              ? `[${value.length} entries]`
+              : typeof value === 'number'
+                ? value.toLocaleString()
+                : String(value);
 
             return (
               <div
                 key={key}
-                onClick={() => !isArray && insertMention(selectedLocality.name, key)}
+                onClick={() => insertMention(selectedLocality.name, key)}
                 className="px-3 py-1.5 hover:bg-gray-100 cursor-pointer text-sm flex justify-between"
               >
                 <span className="text-xs">{key}</span>
-                <span className="text-gray-500 text-xs">{display !== undefined ? String(display) : ''}</span>
+                <span className="text-gray-500 text-xs">{display}</span>
               </div>
             );
           })}
+
 
 
         </div>

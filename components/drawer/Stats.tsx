@@ -27,9 +27,9 @@ const Stats = ({ stats }: StatsProps) => {
                 <div className='text-xs font-semibold text-gray-600 flex items-center gap-1'> <ChartBarStacked size={16} /> General Stats  </div>
                 <div className='grid grid-cols-2 gap-2'>
                     <MetricsCard title='Total Orders' total={stats?.totalOrders} changePercent={4.2} />
-                    <MetricsCard title='Avergae Order Value' total={stats?.avgOrderValue} changePercent={7} />
+                    <MetricsCard title='Average Order Value' total={stats?.avgOrderValue} changePercent={7} />
                     <MetricsCard title='Average Delivery Time' total={stats?.avgDeliveryTime} changePercent={-4.5} />
-                    <MetricsCard title='Total Delivery Dealys' total={stats?.deliveryDelay} showChange={false} />
+                    <MetricsCard title='Total Delivery Delays' total={stats?.deliveryDelay} showChange={false} />
                 </div>
             </div>
 
