@@ -137,7 +137,6 @@ const Drawer = () => {
           setLockedData(response.data.data);
         } else if (response.data.data.isFallback) {
           setIsFallback(true);
-          console.log('Fallback data:', response.data.data);
           setFallbackData(response.data.data);
         } else {
           setStatsData(response.data);
@@ -154,32 +153,37 @@ const Drawer = () => {
     fetchData();
   }, [activePinCode]);
 
-useEffect(() => {
-  const handleClickOutside = (event: MouseEvent) => {
-    const target = event.target as Node;
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      const target = event.target as Node;
 
-    if (
-      drawerRef.current &&
-      !drawerRef.current.contains(target) &&
-      chatIconRef.current &&
-      !chatIconRef.current.contains(target)
-    ) {
-      if (!isChatModalOpen) {
-        setActivePinCode(null);
+      if (
+        drawerRef.current &&
+        !drawerRef.current.contains(target) &&
+        chatIconRef.current &&
+        !chatIconRef.current.contains(target)
+      ) {
+        if (!isChatModalOpen) {
+          setActivePinCode(null);
+        }
       }
+    };
+
+    if (activePinCode !== null) {
+      document.addEventListener('mousedown', handleClickOutside);
     }
-  };
 
-  if (activePinCode !== null) {
-    document.addEventListener('mousedown', handleClickOutside);
-  }
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside);
+    };
+  }, [activePinCode, setActivePinCode, isChatModalOpen]);
 
-  return () => {
-    document.removeEventListener('mousedown', handleClickOutside);
-  };
-}, [activePinCode, setActivePinCode, isChatModalOpen]);
-
-
+  console.log({
+    activePinCode,
+    loading,
+    isLocked,
+    isFallback
+  })
   return (
     <>
       <div
@@ -189,7 +193,7 @@ useEffect(() => {
 
       <div
         ref={drawerRef}
-        className={`fixed flex flex-col top-0 right-0 rounded-l-xl overflow-y-auto h-full border-l-[1px] md:w-[450px] w-[90%] bg-[#FFF2E6] shadow-lg z-50 transform transition-transform duration-300 ${activePinCode ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed flex flex-col top-0 right-0 rounded-l-xl overflow-y-auto h-full border-l-[1px] md:w-[450px] w-[90%] bg-white shadow-lg z-50 transform transition-transform duration-300 ${activePinCode ? 'translate-x-0' : 'translate-x-full'
           }`}
       >
         <DrawerHeader locality={statsData?.data?.areaName || lockedData?.areaName || fallbackData?.areaName || 'Area'} isLocked={isLocked || isFallback} />
@@ -209,8 +213,8 @@ useEffect(() => {
         )}
       </div>
       <div ref={chatIconRef}>
-  <FloatingChatIcon />
-</div>
+        <FloatingChatIcon />
+      </div>
     </>
   );
 };

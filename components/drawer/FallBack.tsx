@@ -1,4 +1,10 @@
-import React from 'react';
+'use client';
+
+import React, { useEffect, useState } from 'react';
+import TopCompanies from './fallback/TopCompanies';
+import SalaryData from './fallback/SalaryData';
+import RentData from './fallback/RentData';
+import axios from 'axios';
 
 interface FallBackComponentProps {
   fallbackData: {
@@ -8,56 +14,61 @@ interface FallBackComponentProps {
     pinCode: string;
     populationDensity: number;
     purchasingPower: number;
-  } | null
+  } | null;
 }
 
 const FallBack = ({ fallbackData }: FallBackComponentProps) => {
+  const [fallBackCompanyData, setFallBackCompanyData] = useState(null);
+  const [fallBackRentData, setFallBackRentData] = useState(null);
+  const [companyLoading, setCompanyLoading] = useState(false);
+  const [rentLoading, setRentLoading] = useState(false);
+
+  useEffect(() => {
+    if (!fallbackData?.pinCode) return;
+
+    const fetchCompanyData = async () => {
+      try {
+        setCompanyLoading(true);
+        const res = await axios.post(`http://localhost:8080/api/areas/getSalary`, {
+          pinCode: fallbackData.pinCode,
+        });
+        setFallBackCompanyData(res.data);
+      } catch (error) {
+        console.error('Company data fetch failed', error);
+      } finally {
+        setCompanyLoading(false);
+      }
+    };
+
+    const fetchRentData = async () => {
+      try {
+        setRentLoading(true);
+        const res = await axios.post(`http://localhost:8080/api/areas/getRentPrice`, {
+          pinCode: fallbackData.pinCode,
+        });
+        setFallBackRentData(res.data);
+      } catch (error) {
+        console.error('Rent data fetch failed', error);
+      } finally {
+        setRentLoading(false);
+      }
+    };
+
+    fetchCompanyData();
+    fetchRentData();
+  }, [fallbackData?.pinCode]);
 
   return (
-    <div className="p-6">
-      <h2 className="text-lg font-semibold mb-4 text-gray-800">
-        Limited Area Insights
-      </h2>
-
-      <table className="w-full border text-sm text-gray-700 bg-white shadow rounded overflow-hidden">
-        <tbody>
-          <tr className="border-b">
-            <td className="px-4 py-3 font-medium bg-gray-100">Area Name</td>
-            <td className="px-4 py-3">{fallbackData?.areaName}</td>
-          </tr>
-          <tr className="border-b">
-            <td className="px-4 py-3 font-medium bg-gray-100">Pin Code</td>
-            <td className="px-4 py-3">{fallbackData?.pinCode}</td>
-          </tr>
-          <tr className="border-b">
-            <td className="px-4 py-3 font-medium bg-gray-100">Population Density</td>
-            <td className="px-4 py-3">
-              {fallbackData?.populationDensity.toLocaleString()} people/sq.km
-            </td>
-          </tr>
-          <tr className="border-b">
-            <td className="px-4 py-3 font-medium bg-gray-100">Median Income</td>
-            <td className="px-4 py-3">
-              ₹{(fallbackData?.medianHouseholdIncome !== undefined
-                ? fallbackData.medianHouseholdIncome / 100000
-                : 0).toFixed(2)} LPA
-            </td>
-          </tr>
-          <tr>
-            <td className="px-4 py-3 font-medium bg-gray-100">Purchasing Power Index</td>
-            <td className="px-4 py-3">
-              {fallbackData?.purchasingPower !== undefined
-                ? `${(fallbackData.purchasingPower * 100).toFixed(1)}%`
-                : '0.0%'}
-            </td>
-
-          </tr>
-        </tbody>
-      </table>
-
-      <p className="text-xs text-gray-500 mt-3">
-        * This is fallback data and may not be fully up-to-date.
-      </p>
+    <div className="px-4 py-2 flex flex-col gap-6">
+      {fallBackRentData || rentLoading ? (
+        <RentData rentData={fallBackRentData} isLoading={rentLoading} />
+      ) : null}
+      {fallBackCompanyData || companyLoading ? (
+        <SalaryData companiesData={fallBackCompanyData} isLoading={companyLoading} />
+      ) : null}
+      {fallBackCompanyData && !companyLoading ? (
+        <TopCompanies companiesData={fallBackCompanyData} isLoading={companyLoading}/>
+      ) : null}
     </div>
   );
 };

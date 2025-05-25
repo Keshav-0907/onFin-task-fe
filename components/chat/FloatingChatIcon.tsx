@@ -12,7 +12,7 @@ const FloatingChatIcon = () => {
     }
     
     return (
-        <div onClick={handleToggleChatModal} className='bg-black text-white rounded-full p-3 z-[1001] fixed bottom-4 right-4 shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer'>
+        <div onClick={handleToggleChatModal} className='bg-black text-white rounded-full p-3 z-[1001] fixed bottom-4 left-4 shadow-lg hover:shadow-xl transition-shadow duration-300 cursor-pointer'>
             <Plus />
         </div>
     )

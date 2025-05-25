@@ -13,8 +13,6 @@ if (!process.env.NEXT_PUBLIC_MAPBOX_TOKEN) {
     throw new Error('NEXT_PUBLIC_MAPBOX_TOKEN is not defined')
 }
 
-console.log('baseURL', baseURL)
-
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN
 
 interface MapProps {

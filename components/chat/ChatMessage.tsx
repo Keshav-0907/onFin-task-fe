@@ -32,30 +32,25 @@ const ChatMessage = () => {
     }
   }, [chatHistory])
 
-  console.log({
-    length: chatHistory?.length,
-    isSummarising,
-    chatSummary,
-  })
-
-
   useEffect(() => {
-    if (chatHistory.length > 10 && chatHistory.length % 5 === 0 && !isSummarising && !chatSummary.summary) {
+    // if (chatHistory.length > 10 && chatHistory.length % 5 === 0 && !isSummarising && !chatSummary.summary) {
+    if (chatHistory.length > 4 && chatHistory.length % 5 === 0 && !isSummarising && !chatSummary.summary) {
+      console.log('Triggering summarisation for chat history', chatHistory.length);
       const getSummary = async () => {
         try {
           setIsSummarising(true);
 
-          const historyToSummarise = chatHistory.slice(0, chatHistory.length - 10);
-          const recentHistory = chatHistory.slice(-10);
+          const historyToSummarise = chatHistory.slice(0, chatHistory.length - 5);
+          // const recentHistory = chatHistory.slice(-10);
 
           const res = await axios.post(`${baseURL}/api/chat/summarise`, {
-            chatHistory: historyToSummarise,
+            chatHistory: historyToSummarise.length > 5 ? historyToSummarise : chatHistory,
           });
 
           if (res.status === 200) {
             console.log('Summary result', res.data);
             setChatSummary(res.data.summary);
-            useChatStore.setState({ chatHistory: recentHistory });
+            // useChatStore.setState({ chatHistory: recentHistory });
           } else {
             console.error('Error summarising chat history', res);
             setIsError(true);
