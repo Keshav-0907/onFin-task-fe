@@ -148,20 +148,6 @@ const ChatMessage = () => {
         </div>
       </div>
 
-      {/* <div className={`top-0 w-full sticky flex gap-2 py-1 text-sm items-center z-10 ${activeAreaName ? 'justify-between' : 'justify-end'}`}>
-        {
-          chatHistory.length > 0 && (
-            <div
-              onClick={clearHistory}
-              className='flex items-center gap-1 cursor-pointer text-red-600 hover:text-red-800 transition-colors duration-200 text-xs'
-            >
-              <Trash2 size={12} />
-              Clear History
-            </div>
-          )
-        }
-      </div> */}
-
       {
         isError && (
           <div className="flex items-center justify-center">

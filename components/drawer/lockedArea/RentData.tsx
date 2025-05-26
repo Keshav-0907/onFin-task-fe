@@ -36,8 +36,14 @@ const RentData = ({ rentData, isLoading }: RentDataProps) => {
   if (isLoading || !rentData) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-blue-500 border-solid border-r-transparent"></div>
+        <div className="relative">
+          <div className="h-12 w-12 rounded-full border-4 border-t-primary border-b-transparent animate-spin"></div>
+          <div className="absolute inset-0 flex items-center justify-center">
+            <span className="sr-only">Loading...</span>
+          </div>
+        </div>
       </div>
+
     );
   }
 

@@ -24,7 +24,7 @@ export default function useServedAreas() {
   useEffect(() => {
     const fetchAreas = async () => {
       try {
-        const res = await axios.get(`${baseURL}/api/areas/served`)
+        const res = await axios.get(`${baseURL}/api/areas/allAreas`)
         
         setAreas(res.data.data)
       } catch {

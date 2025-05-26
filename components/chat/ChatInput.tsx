@@ -70,9 +70,24 @@ const ChatInput = () => {
     getAllAreas()
   }, [])
 
+  const extractMentions = (text: string) => {
+    const mentionPattern = /@([\w\s]+?)\/([\w\s]+)/g
+    const matches = [...text.matchAll(mentionPattern)]
+
+    return matches.map(([, locality, prop]) => ({
+      locality: locality.trim(),
+      property: prop.trim(),
+    }))
+  }
+
+
+
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const val = e.target.value
     setMessage(val)
+
+
+
 
     const atIndex = val.lastIndexOf('@')
     if (atIndex !== -1) {
@@ -94,7 +109,11 @@ const ChatInput = () => {
     setMessage('')
     setLoading(true)
 
+
+
     try {
+      const selectedLocalities = extractMentions(message)
+
       const res = await fetch(`${baseURL}/api/chat/completions`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -103,6 +122,9 @@ const ChatInput = () => {
           pinCode: activePinCode,
           chatHistory: chatHistory.slice(-10),
           chatSummary: chatSummary.summary || '',
+          selectedLocalities: JSON.stringify({
+            selectedLocalities
+          }),
         }),
       })
 

@@ -1,10 +1,11 @@
 import axios from 'axios';
 import { Info } from 'lucide-react';
 import React, { useState, useEffect } from 'react'
-import RentData from './fallback/RentData';
-import TopCompanies from './fallback/TopCompanies';
-import SalaryData from './fallback/SalaryData';
+import RentData from './lockedArea/RentData';
+import TopCompanies from './lockedArea/TopCompanies';
+import SalaryData from './lockedArea/SalaryData';
 import { baseURL } from '@/config/config';
+import WikiData from './lockedArea/WikiData';
 
 interface LockedAreaProps {
     lockedData: {
@@ -65,6 +66,12 @@ interface LockedAreaProps {
             extract_html?: string;
             type?: string;
         };
+        lockedData?: {
+            medianHouseholdIncome: number;
+            populationDensity: number;
+            purchasingPower: number;
+
+        };
     } | null;
 }
 
@@ -106,41 +113,19 @@ const LockedArea = ({ lockedData }: LockedAreaProps) => {
     }, [lockedData?.pinCode]);
 
     console.log({
-        rentData, 
-        rentLoading
+        lockedData
     })
 
     return (
         <div className="py-2 px-4 bg-white space-y-4">
-            <div className='flex flex-col gap-1'>
-                <div className="text-xl font-semibold">{lockedData?.wikiData?.title}</div>
-                <div className='text-xs flex items-center gap-1'><Info size={14} />Data source: Wikipedia</div>
-            </div>
+            {
+                lockedData.wikiData && (
+                    <WikiData lockedData={lockedData} />
+                )
 
-            <div className="w-full rounded-xl shadow-md overflow-hidden">
-                {lockedData?.wikiData?.thumbnail?.source && (
-                    <div className="aspect-[3/2] w-full">
-                        <img
-                            src={lockedData.wikiData.thumbnail.source}
-                            alt={lockedData.wikiData.title}
-                            className="w-full h-full object-cover"
-                        />
-                    </div>
-                )}
-            </div>
+            }
 
-
-
-            <div className="text-gray-600 text-sm">{lockedData?.wikiData?.description}</div>
-            <div className="text-sm border p-2 rounded-lg ">{lockedData?.wikiData?.extract}</div>
-
-            <div className="text-sm px-2 text-blue-600 underline">
-                <a href={lockedData?.wikiData?.content_urls?.desktop?.page} target="_blank" rel="noopener noreferrer">
-                    Read more on Wikipedia
-                </a>
-            </div>
-
-            <div className="px-4 py-2 flex flex-col gap-6">
+            <div className="flex flex-col gap-2">
                 {rentData || rentLoading ? (
                     <RentData rentData={rentData} isLoading={rentLoading} />
                 ) : null}

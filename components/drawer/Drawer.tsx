@@ -152,52 +152,26 @@ const Drawer = () => {
     fetchData();
   }, [activePinCode]);
 
-  // useEffect(() => {
-  //   const handleClickOutside = (event: MouseEvent) => {
-  //     const target = event.target as Node;
-
-  //     if (
-  //       drawerRef.current &&
-  //       !drawerRef.current.contains(target)
-  //     ) {
-  //       if (!isChatModalOpen) {
-  //         setActivePinCode(null);
-  //       }
-  //     }
-  //   };
-
-  //   if (activePinCode !== null) {
-  //     document.addEventListener('mousedown', handleClickOutside);
-  //   }
-
-  //   return () => {
-  //     document.removeEventListener('mousedown', handleClickOutside);
-  //   };
-  // }, [activePinCode, setActivePinCode, isChatModalOpen]);
-
-
   return (
     <div
-        ref={drawerRef}
-        className={`fixed flex flex-col top-0 right-0 rounded-l-xl overflow-y-auto h-full border-l-[1px] md:w-[450px] w-[90%] bg-white shadow-lg z-50 transform transition-transform duration-300 ${activePinCode ? 'translate-x-0' : 'translate-x-full'
-          }`}
-      >
-        <DrawerHeader locality={statsData?.data?.areaName || lockedData?.areaName || fallbackData?.areaName || 'Area'} isLocked={isLocked || isFallback} />
+      ref={drawerRef}
+      className={`fixed flex flex-col top-0 right-0 rounded-l-xl overflow-y-auto h-full border-l-[1px] md:w-[450px] w-[90%] bg-white shadow-lg z-50 transform transition-transform duration-300 ${activePinCode ? 'translate-x-0' : 'translate-x-full'
+        }`}
+    >
+      <DrawerHeader locality={statsData?.data?.areaName || lockedData?.areaName || fallbackData?.areaName || 'Area'} isLocked={isLocked || isFallback} />
 
-        {loading ? (
-          <div>
-            <DrawerSkeleton />
-          </div>
-        ) : isLocked ? (
-          <LockedArea lockedData={lockedData} />
-        ) : isFallback ? (
-          <FallBack fallbackData={fallbackData} />
-        ) : statsData ? (
-          <Stats stats={statsData.data} />
-        ) : (
-          <div className="p-4 text-sm text-red-500">Unable to fetch area details.</div>
-        )}
-      </div>
+      {loading ? (
+        <div>
+          <DrawerSkeleton />
+        </div>
+      ) : isLocked ? (
+        <LockedArea lockedData={lockedData} />
+      ) : statsData ? (
+        <Stats stats={statsData.data} />
+      ) : (
+        <div className="p-4 text-sm text-red-500">Unable to fetch area details.</div>
+      )}
+    </div>
   );
 };
 

@@ -35,7 +35,7 @@ const TopCompanies = ({ companiesData, isLoading }: CompanyDataProps) => {
     }
 
     return (
-        <div className="py-2">
+        <div className="p-2">
             <h2 className="text-xl font-semibold mb-4 text-gray-800">Top Companies</h2>
             <div className="flex flex-col gap-4">
                 {companies.map((company, index) => {
