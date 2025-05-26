@@ -2,40 +2,35 @@
 import React, { useEffect, useRef, useState } from 'react'
 import { Input } from '../ui/input'
 import { Button } from '../ui/button'
+import { ChevronRight } from 'lucide-react'
+import axios from 'axios'
+import { baseURL } from '@/config/config'
 import { useAreaStore } from '@/store/useAreaStore'
 import { useChatStore } from '@/store/useChatStore'
-import { baseURL } from '@/config/config'
-import axios from 'axios'
-import { ChevronRight } from 'lucide-react'
 
 interface DailyStat {
-  date: string;
-  opens?: number;
-  orders?: number;
+  date: string
+  opens?: number
+  orders?: number
 }
 
 interface Stats {
-  pinCode: string;
-  totalOrders: number;
-  avgOrderValue: number;
-  aovChange: number;
-  appOpens: number;
-  appOpensHistory: DailyStat[];
-  uniqueCustomers: number;
-  avgDeliveryTime: number;
-  deliveryDelay: number;
-  dailyOrders: DailyStat[];
+  pinCode: string
+}
+
+interface LockedData {
+  pinCode: string
 }
 
 interface Locality {
-  name: string;
-  wiki_name: string;
-  pinCode: number;
-  isServed: boolean;
-  activeFrom: string;
-  stats: Stats;
+  name: string
+  wiki_name: string
+  pinCode: number
+  isServed: boolean
+  activeFrom?: string
+  stats?: Stats            // present when isServed === true
+  lockedData?: LockedData  // present when isServed === false
 }
-
 
 const ChatInput = () => {
   const [message, setMessage] = useState('')
@@ -47,25 +42,29 @@ const ChatInput = () => {
 
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const activePinCode = useAreaStore((state) => state.activePindCode)
-  const addChatMessage = useChatStore((state) => state.addChatMessage)
-  const updateStreamingMessage = useChatStore((state) => state.updateStreamingMessage)
-  const chatHistory = useChatStore((state) => state.chatHistory)
-  const setIsError = useChatStore((state) => state.setIsError)
-  const [servedAreasData, setServedAreasData] = useState<Locality[]>([])
-  const chatSummary = useChatStore((state) => state.chatSummary)
+  const activePinCode = useAreaStore(s => s.activePindCode)
+  const addChatMessage = useChatStore(s => s.addChatMessage)
+  const updateStream = useChatStore(s => s.updateStreamingMessage)
+  const chatHistory = useChatStore(s => s.chatHistory)
+  const setIsError = useChatStore(s => s.setIsError)
+  const chatSummary = useChatStore(s => s.chatSummary)
+
+  const [areasData, setAreasData] = useState<Locality[]>([])
 
   useEffect(() => {
     const getAllAreas = async () => {
       try {
-        const res = await axios.get(`${baseURL}/api/areas/servedArea-with-data`)
-        if (res.status === 200) {
-          setServedAreasData(res.data.allServedAreas)
-        } else {
-          console.error('Failed to fetch areas:', res.statusText)
+        const { data, status, statusText } =
+          await axios.get(`${baseURL}/api/areas/all-data-combined`)
+
+        if (status !== 200) {
+          console.error('Failed to fetch areas:', statusText)
+          return
         }
-      } catch (error) {
-        console.error('Error fetching areas:', error)
+
+        setAreasData([...(data.servedAreas || []), ...(data.lockedAreas || [])])
+      } catch (err) {
+        console.error('Error fetching areas:', err)
       }
     }
     getAllAreas()
@@ -77,8 +76,7 @@ const ChatInput = () => {
 
     const atIndex = val.lastIndexOf('@')
     if (atIndex !== -1) {
-      const query = val.slice(atIndex + 1)
-      setMentionQuery(query)
+      setMentionQuery(val.slice(atIndex + 1))
       setMentionMode(true)
     } else {
       setMentionMode(false)
@@ -92,31 +90,14 @@ const ChatInput = () => {
     if (!message.trim()) return
 
     setIsError(false)
-    const userTimestamp = new Date().toISOString()
-
-    addChatMessage({
-      writer: 'user',
-      message,
-      timestamp: userTimestamp,
-    })
-
+    addChatMessage({ writer: 'user', message, timestamp: new Date().toISOString() })
     setMessage('')
     setLoading(true)
-
-    console.log({
-      msg: 'data for chat completion',
-      message,
-      chatHistory: chatHistory.slice(-10),
-      pinCode: activePinCode,
-      chatSummary: chatSummary.summary || '',
-    })
 
     try {
       const res = await fetch(`${baseURL}/api/chat/completions`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message,
           pinCode: activePinCode,
@@ -125,50 +106,34 @@ const ChatInput = () => {
         }),
       })
 
-      if (!res.body) {
-        console.error('Response body is null')
+      if (!res.body || res.status !== 200) {
+        console.error('Streaming failed – status', res.status)
         setIsError(true)
-        updateStreamingMessage('[Error fetching response]')
+        updateStream('[Error fetching response]')
         return
       }
 
-      if (res.status !== 200) {
-        const errorMessage = await res.text()
-        console.error('Error response:', errorMessage)
-        setIsError(true)
-        updateStreamingMessage('[Error fetching response]')
-        return
-      }
-
-      addChatMessage({
-        writer: 'assistant',
-        message: '',
-        timestamp: new Date().toISOString(),
-      })
+      addChatMessage({ writer: 'assistant', message: '', timestamp: new Date().toISOString() })
 
       const reader = res.body.getReader()
       const decoder = new TextDecoder()
       let done = false
-
       while (!done) {
         const { value, done: doneReading } = await reader.read()
         done = doneReading
-
         const chunk = decoder.decode(value)
-        const lines = chunk
+        chunk
           .split('\n')
           .filter(line => line.trim().startsWith('data: '))
           .map(line => line.replace(/^data: /, ''))
-
-        for (const line of lines) {
-          if (line === '[DONE]') return
-          updateStreamingMessage(line)
-        }
+          .forEach(line => {
+            if (line !== '[DONE]') updateStream(line)
+          })
       }
     } catch (err) {
       console.error('Streaming failed:', err)
       setIsError(true)
-      updateStreamingMessage('[Error fetching response]')
+      updateStream('[Error fetching response]')
     } finally {
       setLoading(false)
     }
@@ -183,7 +148,6 @@ const ChatInput = () => {
     inputRef.current?.focus()
   }
 
-
   return (
     <div className="p-2 border-t flex flex-col gap-1 relative">
       <form onSubmit={handleSendMessage} className="flex gap-2">
@@ -192,72 +156,83 @@ const ChatInput = () => {
           autoFocus
           onChange={handleInputChange}
           value={message}
-          type="text"
-          placeholder="Type your message..."
-          className="w-full"
+          placeholder="Type your message…"
           disabled={loading}
+          className="w-full"
         />
         <Button variant="outline" type="submit" disabled={loading}>
-          {loading ? 'Sending...' : 'Send'}
+          {loading ? 'Sending…' : 'Send'}
         </Button>
       </form>
 
       {mentionMode && !selectedLocality && (
-        <div className="absolute bottom-14 left-2 w-48 text-sm rounded-md shadow-md bg-white z-10 max-h-52 overflow-y-auto">
-          {servedAreasData
-            .filter(area =>
-              area.name.toLowerCase().includes(mentionQuery.toLowerCase())
-            )
+        <div className="absolute bottom-14 left-2 w-56 max-h-52 overflow-y-auto bg-white shadow-md rounded-md text-sm z-10">
+          {areasData
+            .filter(a => a.name.toLowerCase().includes(mentionQuery.toLowerCase()))
             .map(area => (
               <div
                 key={area.pinCode}
                 onClick={() => setSelectedLocality(area)}
-                className="px-3 py-2 hover:bg-gray-100 cursor-pointer text-xs flex justify-between items-center"
+                className="px-3 py-2 hover:bg-gray-100 cursor-pointer flex justify-between items-center"
               >
                 <span>@{area.name}</span>
-                <span> <ChevronRight size={14} /> </span>
+                <ChevronRight size={14} />
               </div>
             ))}
         </div>
       )}
 
       {mentionMode && selectedLocality && (
-        <div className="absolute bottom-14 left-2 w-72 border rounded-md shadow-md bg-white z-20 max-h-60 overflow-y-auto">
-          <div className="p-2 font-semibold border-b bg-gray-50 text-sm flex items-center justify-between sticky top-0">
-            <button
-              onClick={() => setSelectedLocality(null)}
-              className="text-xs font-normal cursor-pointer"
-            >
+        <div className="absolute bottom-14 left-2 w-72 max-h-60 overflow-y-auto bg-white shadow-md border rounded-md z-20">
+          <div className="p-2 bg-gray-50 border-b text-xs font-medium flex justify-between items-center sticky top-0">
+            <button onClick={() => setSelectedLocality(null)} className="cursor-pointer">
               ← Back
             </button>
-            <span className="text-gray-700 text-xs font-medium">Data for {selectedLocality.name}</span>
+            <span>{selectedLocality.name}</span>
           </div>
 
-          {Object.entries(selectedLocality.stats).map(([key, value]) => {
-            const isArray = Array.isArray(value);
-            const isObject = !isArray && typeof value === 'object' && value !== null;
+          {selectedLocality.stats &&
+            Object.entries(selectedLocality.stats).map(([key, value]) => {
+              const display =
+                Array.isArray(value)
+                  ? `[${value.length} entries]`
+                  : typeof value === 'number'
+                    ? value.toLocaleString()
+                    : String(value)
+              return (
+                <div
+                  key={key}
+                  onClick={() => insertMention(selectedLocality.name, key)}
+                  className="px-3 py-1.5 hover:bg-gray-100 cursor-pointer text-sm flex justify-between"
+                >
+                  <span className="text-xs">{key}</span>
+                  <span className="text-gray-500 text-xs">{display}</span>
+                </div>
+              )
+            })}
 
-            // For both primitive values and arrays (e.g., dailyOrders), allow mention insertion
-            const display = isArray
-              ? `[${value.length} entries]`
-              : typeof value === 'number'
-                ? value.toLocaleString()
-                : String(value);
-
-            return (
+          {selectedLocality.lockedData &&
+            Object.entries(selectedLocality.lockedData).map(([key, value]) => (
               <div
                 key={key}
                 onClick={() => insertMention(selectedLocality.name, key)}
                 className="px-3 py-1.5 hover:bg-gray-100 cursor-pointer text-sm flex justify-between"
               >
                 <span className="text-xs">{key}</span>
-                <span className="text-gray-500 text-xs">{display}</span>
+                <span className="text-gray-500 text-xs">{String(value)}</span>
               </div>
-            );
-          })}
+            ))}
 
-
-
+          {['Average Salaries', 'Average Rent Price'].map(label => (
+            <div
+              key={label}
+              onClick={() => insertMention(selectedLocality.name, label.replace(/\s+/g, ''))}
+              className="px-3 py-1.5 hover:bg-gray-100 cursor-pointer text-sm flex justify-between"
+            >
+              <span className="text-xs">{label}</span>
+              <span className="text-gray-500 text-xs">—</span>
+            </div>
+          ))}
         </div>
       )}
     </div>
