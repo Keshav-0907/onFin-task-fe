@@ -96,6 +96,9 @@ export const RentData = ({ rentData, isLoading }: RentDataProps) => {
         display: true,
         text: 'Rent Distribution',
       },
+      tooltip: {
+      enabled: false, 
+    },
     },
     scales: {
       y: {
