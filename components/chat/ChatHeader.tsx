@@ -44,9 +44,9 @@ const ChatHeader = () => {
           </div>
         )}
       </div>
-      <div>
+      <div className='flex items-center gap-2'>
         {activeAreaName && (
-          <div className='text-xs text-gray-500 bg-amber-100 px-2 py-1 rounded-lg flex items-center gap-1'>
+          <div className='text-xs text-gray-500 bg-amber-100 border border-amber-600 px-2 py-0.5 rounded-lg flex items-center gap-1'>
             {activeAreaName}
           </div>
         )}
