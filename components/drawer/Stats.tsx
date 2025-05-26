@@ -21,12 +21,14 @@ interface StatsProps {
 }
 
 const Stats = ({ stats }: StatsProps) => {
+
+    const totalOrders = stats?.dailyOrders?.reduce((sum, day) => sum + day.orders, 0)
     return (
         <div className='px-4 py-4 flex-col flex gap-4'>
             <div className='flex flex-col gap-2'>
                 <div className='text-xs font-semibold text-gray-600 flex items-center gap-1'> <ChartBarStacked size={16} /> General Stats  </div>
                 <div className='grid grid-cols-2 gap-2'>
-                    <MetricsCard title='Total Orders' total={stats?.totalOrders} changePercent={4.2} />
+                    <MetricsCard title='Total Orders' total={totalOrders} changePercent={4.2} />
                     <MetricsCard title='Average Order Value' total={stats?.avgOrderValue} changePercent={7} />
                     <MetricsCard title='Average Delivery Time' total={stats?.avgDeliveryTime} changePercent={-4.5} />
                     <MetricsCard title='Total Delivery Delays' total={stats?.deliveryDelay} showChange={false} />

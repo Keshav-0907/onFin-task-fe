@@ -8,6 +8,7 @@ import React, { useEffect, useRef } from 'react'
 import axios from 'axios'
 import { baseURL } from '@/config/config'
 import { toast } from 'react-hot-toast'
+import { formatResponseText } from '@/lib/helperFunctions'
 
 const ChatMessage = () => {
   const { areas } = useServedAreas()
@@ -36,7 +37,6 @@ const ChatMessage = () => {
   useEffect(() => {
     // if (chatHistory.length > 10 && chatHistory.length % 5 === 0 && !isSummarising && !chatSummary.summary) {
     if (chatHistory.length > 4 && chatHistory.length % 5 === 0 && !isSummarising) {
-      console.log('Triggering summarisation for chat history', chatHistory.length);
       const getSummary = async () => {
         try {
           setIsSummarising(true);
@@ -49,7 +49,6 @@ const ChatMessage = () => {
           });
 
           if (res.status === 200) {
-            console.log('Summary result', res.data);
             setChatSummary(res.data.summary);
             // useChatStore.setState({ chatHistory: recentHistory });
           } else {
@@ -123,8 +122,12 @@ const ChatMessage = () => {
                     }`}
                 >
                   <div className='whitespace-pre-wrap text-sm'>
-                    {chat.message || (
-                      <span className='italic text-gray-400'>...</span>
+                    {chat.writer == 'assistant' ? (
+                      formatResponseText(chat.message || '')
+                    ) : (
+                      chat.message || (
+                        <span className='italic text-gray-400'>...</span>
+                      )
                     )}
                   </div>
                   <div className='text-[10px] mt-1 text-right opacity-60'>

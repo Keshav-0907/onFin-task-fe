@@ -67,17 +67,15 @@ const RentData = ({ rentData, isLoading }: RentDataProps) => {
 
   const hasData = data.some((item) => item.percentage > 0);
 
-  console.log(hasData)
-
   return (
-    <Card className="w-full max-w-3xl rounded-2xl shadow-md bg-white py-4">
+    <Card className="w-full max-w-3xl rounded-2xl shadow-md bg-white py-3">
       <CardContent className="px-4">
-        <h2 className="text-xl font-semibold text-gray-800 mb-6">
+        <h2 className="text-lg font-semibold text-gray-800 mb-6">
           Rent Price Distribution
         </h2>
 
         {!hasData ? (
-          <div className="text-gray-500 text-center py-12">
+          <div className="text-gray-500 text-center py-4">
             No rent data available for this area.
           </div>
         ) : (

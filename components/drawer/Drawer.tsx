@@ -6,11 +6,11 @@ import axios from 'axios';
 import DrawerHeader from './DrawerHeader';
 import Stats from './Stats';
 import LockedArea from './LockedArea';
-import FallBack from './FallBack';
 import DrawerSkeleton from '../skeletons/DrawerSkeleton';
 import FloatingChatIcon from '../chat/FloatingChatIcon';
 import { useChatStore } from '@/store/useChatStore';
 import { baseURL } from '@/config/config';
+import useServedAreas from '@/hooks/useServedAreas';
 
 interface StatsProps {
   data: {
@@ -103,10 +103,9 @@ interface LockedDataProps {
 
 
 const Drawer = () => {
+  const { areas } = useServedAreas();
   const activePinCode = useAreaStore((state) => state.activePindCode);
-  const setActivePinCode = useAreaStore((state) => state.setActivePinCode);
   const drawerRef = useRef<HTMLDivElement>(null);
-  const isChatModalOpen = useChatStore((state) => state.isChatModalOpen);
 
   const [statsData, setStatsData] = useState<StatsProps | null>(null);
   const [lockedData, setLockedData] = useState<LockedDataProps | null>(null);
@@ -152,13 +151,14 @@ const Drawer = () => {
     fetchData();
   }, [activePinCode]);
 
+  const areaName = areas.find(area => Number(area.pinCode) == activePinCode)?.name || 'Area';
   return (
     <div
       ref={drawerRef}
       className={`fixed flex flex-col top-0 right-0 rounded-l-xl overflow-y-auto h-full border-l-[1px] md:w-[450px] w-[90%] bg-white shadow-lg z-50 transform transition-transform duration-300 ${activePinCode ? 'translate-x-0' : 'translate-x-full'
         }`}
     >
-      <DrawerHeader locality={statsData?.data?.areaName || lockedData?.areaName || fallbackData?.areaName || 'Area'} isLocked={isLocked || isFallback} />
+      <DrawerHeader locality={areaName || 'Area'} isLocked={isLocked || isFallback} />
 
       {loading ? (
         <div>

@@ -112,10 +112,6 @@ const LockedArea = ({ lockedData }: LockedAreaProps) => {
         fetchData();
     }, [lockedData?.pinCode]);
 
-    console.log({
-        lockedData
-    })
-
     return (
         <div className="py-2 px-4 bg-white space-y-4">
             {

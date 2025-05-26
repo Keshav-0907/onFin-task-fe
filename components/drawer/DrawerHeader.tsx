@@ -35,7 +35,7 @@ const DrawerHeader = ({ locality, isLocked }: DrawerHeaderProps) => {
 
       </div>
 
-      <div onClick={() => setActivePinCode(null)} className="px-2 py-1 rounded-md hover:bg-red-600 text-white text-sm bg-red-500 cursor-pointer transition-colors duration-200">
+      <div onClick={() => setActivePinCode(null)} className="px-2 py-1 rounded-md hover:bg-red-600 text-white text-sm bg-red-400 border border-red-500 cursor-pointer transition-colors duration-200">
         Close
       </div>
     </div>
