@@ -78,37 +78,37 @@ const LockedArea = ({ lockedData }: LockedAreaProps) => {
     useEffect(() => {
         if (!lockedData?.pinCode) return;
 
-        const fetchCompanyData = async () => {
+        const fetchData = async () => {
+            setCompanyLoading(true);
+            setRentLoading(true);
+
             try {
-                setCompanyLoading(true);
-                const res = await axios.post(`${baseURL}/api/areas/getSalary`, {
-                    pinCode: lockedData.pinCode,
-                });
-                setCompanyData(res.data);
+                const [companyRes, rentRes] = await Promise.all([
+                    axios.post(`${baseURL}/api/areas/getSalary`, {
+                        pinCode: lockedData.pinCode,
+                    }),
+                    axios.post(`${baseURL}/api/areas/getRentPrice`, {
+                        pinCode: lockedData.pinCode,
+                    }),
+                ]);
+
+                setCompanyData(companyRes.data);
+                setRentData(rentRes.data);
             } catch (error) {
-                console.error('Company data fetch failed', error);
+                console.error('Data fetch failed', error);
             } finally {
                 setCompanyLoading(false);
-            }
-        };
-
-        const fetchRentData = async () => {
-            try {
-                setRentLoading(true);
-                const res = await axios.post(`${baseURL}/api/areas/getRentPrice`, {
-                    pinCode: lockedData.pinCode,
-                });
-                setRentData(res.data);
-            } catch (error) {
-                console.error('Rent data fetch failed', error);
-            } finally {
                 setRentLoading(false);
             }
         };
 
-        fetchCompanyData();
-        fetchRentData();
+        fetchData();
     }, [lockedData?.pinCode]);
+
+    console.log({
+        rentData, 
+        rentLoading
+    })
 
     return (
         <div className="py-2 px-4 bg-white space-y-4">

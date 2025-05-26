@@ -61,6 +61,8 @@ const RentData = ({ rentData, isLoading }: RentDataProps) => {
 
   const hasData = data.some((item) => item.percentage > 0);
 
+  console.log(hasData)
+
   return (
     <Card className="w-full max-w-3xl rounded-2xl shadow-md bg-white py-4">
       <CardContent className="px-4">
