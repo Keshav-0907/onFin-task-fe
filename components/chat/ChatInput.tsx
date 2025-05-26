@@ -103,6 +103,14 @@ const ChatInput = () => {
     setMessage('')
     setLoading(true)
 
+    console.log({
+      msg: 'data for chat completion',
+      message,
+      chatHistory: chatHistory.slice(-10),
+      pinCode: activePinCode,
+      chatSummary: chatSummary.summary || '',
+    })
+
     try {
       const res = await fetch(`${baseURL}/api/chat/completions`, {
         method: 'POST',

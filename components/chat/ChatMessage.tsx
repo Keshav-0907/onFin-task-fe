@@ -35,7 +35,7 @@ const ChatMessage = () => {
 
   useEffect(() => {
     // if (chatHistory.length > 10 && chatHistory.length % 5 === 0 && !isSummarising && !chatSummary.summary) {
-    if (chatHistory.length > 4 && chatHistory.length % 5 === 0 && !isSummarising && !chatSummary.summary) {
+    if (chatHistory.length > 4 && chatHistory.length % 5 === 0 && !isSummarising) {
       console.log('Triggering summarisation for chat history', chatHistory.length);
       const getSummary = async () => {
         try {
@@ -75,13 +75,11 @@ const ChatMessage = () => {
     toast.success('Chat history cleared successfully');
   };
 
-  console.log(chatHistory.length, 'chat history length');
-
   return (
-    <div className='relative flex flex-col overflow-y-auto w-full'>
+    <div className='flex flex-col overflow-y-auto w-full'>
       <div
         ref={scrollRef}
-        className='overflow-y-auto space-y-3 p-2 pt-10 h-full'
+        className='overflow-y-auto space-y-3 p-2 pt-2 h-full relative'
       >
         {chatHistory.length === 0 && !chatSummary.summary && (
           <div className="text-center text-gray-600 mt-12 px-4 space-y-2">
@@ -92,8 +90,7 @@ const ChatMessage = () => {
           </div>
         )}
 
-
-        {chatSummary.summary && (
+        {/* {chatSummary.summary && (
           <div className='bg-gray-100 text-black rounded-lg px-3 py-2 text-sm shadow border border-green-400'>
             <div className='text-xs text-gray-500'>Summary of Older Chats</div>
             <div className='whitespace-pre-wrap'>
@@ -101,7 +98,7 @@ const ChatMessage = () => {
             </div>
           </div>
 
-        )}
+        )} */}
 
         <div className='p-2 flex flex-col gap-2'>
           {chatHistory.map((chat, index) => {
@@ -151,22 +148,7 @@ const ChatMessage = () => {
         </div>
       </div>
 
-      <div className={`absolute top-0 w-full flex gap-2 bg-slate-1900 py-1 px-2 text-sm items-center z-10 ${activeAreaName ? 'justify-between' : 'justify-end'}`}>
-        {activeAreaName && (
-          <div className='flex gap-2'>
-            <div className='text-xs'>Active Area:</div>
-            <div className='text-xs bg-yellow-500 pl-2 pr-1 py-0.5 rounded-full w-fit text-white flex items-center gap-1'>
-              {activeAreaName}
-              <div
-                className='cursor-pointer bg-white text-yellow-500 rounded-full p-[2px]'
-                onClick={() => setActivePinCode(null)}
-              >
-                <X size={12} strokeWidth={2} />
-              </div>
-            </div>
-          </div>
-        )}
-
+      <div className={`top-0 w-full sticky flex gap-2 py-1 text-sm items-center z-10 ${activeAreaName ? 'justify-between' : 'justify-end'}`}>
         {
           chatHistory.length > 0 && (
             <div
