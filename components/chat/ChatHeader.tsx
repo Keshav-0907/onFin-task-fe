@@ -1,8 +1,10 @@
 import useServedAreas from '@/hooks/useServedAreas';
 import { useAreaStore } from '@/store/useAreaStore';
-import { useChatStore } from '@/store/useChatStore';
-import { Bot, RotateCw, X } from 'lucide-react'
+import { useChatStore } from '@/store/useChatStore'
+
+import { Bot, RotateCw, Trash2, X } from 'lucide-react'
 import React from 'react'
+import toast from 'react-hot-toast';
 
 const ChatHeader = () => {
   const { areas } = useServedAreas()
@@ -11,10 +13,22 @@ const ChatHeader = () => {
   const chatSummary = useChatStore((state) => state.chatSummary);
   const isSummarising = useChatStore((state) => state.isSummarising);
   const activePinCode = useAreaStore((state) => state.activePindCode);
+  const setActivePinCode = useAreaStore((state) => state.setActivePinCode)
+  const isError = useChatStore((state) => state.isError)
+  const setIsError = useChatStore((state) => state.setIsError)
+    const chatHistory = useChatStore((state) => state.chatHistory)
+  
 
   const activeAreaName = areas.find(
     (area) => Number(area.pinCode) === activePinCode
   )?.name
+
+  const clearHistory = () => {
+    useChatStore.setState({ chatHistory: [], chatSummary: { summary: '' } });
+    setActivePinCode(null);
+    setIsError(false);
+    toast.success('Chat history cleared successfully');
+  };
 
   return (
 
@@ -33,9 +47,19 @@ const ChatHeader = () => {
       <div>
         {activeAreaName && (
           <div className='text-xs text-gray-500 bg-amber-100 px-2 py-1 rounded-lg flex items-center gap-1'>
-            Active Area: {activeAreaName}
+            {activeAreaName}
           </div>
         )}
+        {
+          chatHistory.length > 0 && (
+            <div
+              onClick={clearHistory}
+              className='flex items-center border p-1 border-red-500 rounded-sm gap-1 text-xs cursor-pointer text-red-600 hover:bg-red-800 hover:text-white transition-colors duration-200'
+            >
+              <Trash2 size={12} />
+            </div>
+          )
+        }
       </div>
     </div>
   )

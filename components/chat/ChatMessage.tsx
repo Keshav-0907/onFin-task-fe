@@ -148,7 +148,7 @@ const ChatMessage = () => {
         </div>
       </div>
 
-      <div className={`top-0 w-full sticky flex gap-2 py-1 text-sm items-center z-10 ${activeAreaName ? 'justify-between' : 'justify-end'}`}>
+      {/* <div className={`top-0 w-full sticky flex gap-2 py-1 text-sm items-center z-10 ${activeAreaName ? 'justify-between' : 'justify-end'}`}>
         {
           chatHistory.length > 0 && (
             <div
@@ -160,7 +160,7 @@ const ChatMessage = () => {
             </div>
           )
         }
-      </div>
+      </div> */}
 
       {
         isError && (

@@ -32,7 +32,6 @@ interface ChartData {
   percentage: number;
 }
 
-
 const RentData = ({ rentData, isLoading }: RentDataProps) => {
   if (isLoading || !rentData) {
     return (
@@ -60,60 +59,69 @@ const RentData = ({ rentData, isLoading }: RentDataProps) => {
     };
   });
 
+  const hasData = data.some((item) => item.percentage > 0);
+
   return (
     <Card className="w-full max-w-3xl rounded-2xl shadow-md bg-white py-4">
       <CardContent className="px-4">
         <h2 className="text-xl font-semibold text-gray-800 mb-6">
           Rent Price Distribution
         </h2>
-        <ResponsiveContainer width="100%" height={350}>
-          <BarChart data={data} margin={{ top: 20, right: 30, left: 10, bottom: 30 }}>
-            <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
-            <XAxis
-              dataKey="range"
-              tick={{ fill: '#4a5568', fontSize: 12 }}
-              axisLine={{ stroke: '#cbd5e0' }}
-              tickLine={false}
-              angle={-20}
-              textAnchor="end"
-              interval={0}
-            />
-            <YAxis
-              domain={[0, 100]}
-              tick={{ fill: '#4a5568', fontSize: 12 }}
-              axisLine={{ stroke: '#cbd5e0' }}
-              tickLine={false}
-              label={{
-                value: 'Percentage (%)',
-                angle: -90,
-                position: 'insideLeft',
-                fill: '#718096',
-                fontSize: 12,
-              }}
-            />
-            <Tooltip
-              formatter={(value: number, name: string, props) => [
-                `${value}% (${props.payload.count} listings)`,
-                'Rent Range',
-              ]}
-              contentStyle={{
-                backgroundColor: 'white',
-                border: '1px solid #e2e8f0',
-                borderRadius: '0.5rem',
-                fontSize: '14px',
-              }}
-            />
-            <Bar dataKey="percentage" fill="#3C82F6" radius={[5, 5, 0, 0]} maxBarSize={40}>
-              <LabelList
-                dataKey="percentage"
-                position="top"
-                formatter={(val: number) => `${val}%`}
-                fill="#1f2937"
-                fontSize={12}
+
+        {!hasData ? (
+          <div className="text-gray-500 text-center py-12">
+            No rent data available for this area.
+          </div>
+        ) : (
+          <ResponsiveContainer width="100%" height={350}>
+            <BarChart data={data} margin={{ top: 20, right: 30, left: 10, bottom: 30 }}>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e2e8f0" />
+              <XAxis
+                dataKey="range"
+                tick={{ fill: '#4a5568', fontSize: 12 }}
+                axisLine={{ stroke: '#cbd5e0' }}
+                tickLine={false}
+                angle={-20}
+                textAnchor="end"
+                interval={0}
               />
-            </Bar>
-          </BarChart>
-        </ResponsiveContainer>
+              <YAxis
+                domain={[0, 100]}
+                tick={{ fill: '#4a5568', fontSize: 12 }}
+                axisLine={{ stroke: '#cbd5e0' }}
+                tickLine={false}
+                label={{
+                  value: 'Percentage (%)',
+                  angle: -90,
+                  position: 'insideLeft',
+                  fill: '#718096',
+                  fontSize: 12,
+                }}
+              />
+              <Tooltip
+                formatter={(value: number, name: string, props) => [
+                  `${value}% (${props.payload.count} listings)`,
+                  'Rent Range',
+                ]}
+                contentStyle={{
+                  backgroundColor: 'white',
+                  border: '1px solid #e2e8f0',
+                  borderRadius: '0.5rem',
+                  fontSize: '14px',
+                }}
+              />
+              <Bar dataKey="percentage" fill="#3C82F6" radius={[5, 5, 0, 0]} maxBarSize={40}>
+                <LabelList
+                  dataKey="percentage"
+                  position="top"
+                  formatter={(val: number) => `${val}%`}
+                  fill="#1f2937"
+                  fontSize={12}
+                />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        )}
       </CardContent>
     </Card>
   );
